@@ -34,7 +34,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 Plans:
 - [x] 01-01-PLAN.md — Package skeleton, CLI entry point, and CommandResult output schema
-- [ ] 01-02-PLAN.md — State parser: Pydantic models and .planning/ file readers
+- [x] 01-02-PLAN.md — State parser: Pydantic models and .planning/ file readers
 - [ ] 01-03-PLAN.md — Transport layer: claude-agent-sdk adapter with typed exceptions
 
 ### Phase 2: Core Commands
@@ -101,7 +101,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 1/3 | In Progress | - |
+| 1. Foundation | 2/3 | In Progress | - |
 | 2. Core Commands | 0/3 | Not started | - |
 | 3. Reliability | 0/2 | Not started | - |
 | 4. Library API and Events | 0/2 | Not started | - |

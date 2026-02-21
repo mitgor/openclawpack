@@ -66,5 +66,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-21
-Stopped at: Completed 01-03-PLAN.md (transport layer, exception hierarchy, ClaudeTransport adapter)
+Stopped at: Completed 01-02-PLAN.md (state parser, Pydantic models, read_project_state)
 Resume file: None
