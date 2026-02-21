@@ -12,7 +12,7 @@ OpenClawPack delivers AI agent control over the GSD framework through five phase
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Foundation** - Transport layer, typed models, state parsing, and installable package skeleton
+- [x] **Phase 1: Foundation** - Transport layer, typed models, state parsing, and installable package skeleton (completed 2026-02-21)
 - [ ] **Phase 2: Core Commands** - Non-interactive GSD commands with workflow engine and answer injection
 - [ ] **Phase 3: Reliability** - Retry logic, session continuity, output formats, and cost tracking
 - [ ] **Phase 4: Library API and Events** - Async Python API and lifecycle event hook system
@@ -101,7 +101,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 2/3 | In Progress | - |
+| 1. Foundation | 2/3 | Complete    | 2026-02-21 |
 | 2. Core Commands | 0/3 | Not started | - |
 | 3. Reliability | 0/2 | Not started | - |
 | 4. Library API and Events | 0/2 | Not started | - |
