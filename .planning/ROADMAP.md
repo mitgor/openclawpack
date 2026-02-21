@@ -46,12 +46,12 @@ Plans:
   2. Running `openclawpack plan-phase 1` and `openclawpack execute-phase 1` on a project drives GSD planning and execution for that phase, with all interactive prompts handled via pre-filled answer injection
   3. Running `openclawpack status --project-dir /path/to/project` returns structured JSON showing current phase, progress, and requirement completion
   4. All commands accept `--verbose` for detailed subprocess output and `--quiet` for minimal output, and default to structured JSON on stdout
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 02-01: TBD
-- [ ] 02-02: TBD
-- [ ] 02-03: TBD
+- [ ] 02-01-PLAN.md — Transport extension, answer injection engine, workflow engine, and CLI command dispatchers
+- [ ] 02-02-PLAN.md — Status and new-project command workflows
+- [ ] 02-03-PLAN.md — Plan-phase and execute-phase command workflows
 
 ### Phase 3: Reliability
 **Goal**: Commands survive transient failures, maintain conversation context across multi-step workflows, and report cost/token usage to enable agent budget management
