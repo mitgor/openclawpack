@@ -9,10 +9,10 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Transport
 
-- [ ] **TRNS-01**: CLI can spawn Claude Code subprocess with piped stdin/stdout and capture structured output
-- [ ] **TRNS-02**: Subprocess has configurable timeout with graceful termination (SIGTERM then SIGKILL)
-- [ ] **TRNS-03**: Concurrent stdout/stderr reading prevents pipe buffer deadlocks
-- [ ] **TRNS-04**: Typed exception hierarchy distinguishes CLINotFound, ProcessError, TimeoutError, JSONDecodeError, and GSD-specific errors
+- [x] **TRNS-01**: CLI can spawn Claude Code subprocess with piped stdin/stdout and capture structured output
+- [x] **TRNS-02**: Subprocess has configurable timeout with graceful termination (SIGTERM then SIGKILL)
+- [x] **TRNS-03**: Concurrent stdout/stderr reading prevents pipe buffer deadlocks
+- [x] **TRNS-04**: Typed exception hierarchy distinguishes CLINotFound, ProcessError, TimeoutError, JSONDecodeError, and GSD-specific errors
 - [ ] **TRNS-05**: Retry logic with exponential backoff handles rate limits and transient subprocess failures
 - [ ] **TRNS-06**: Session ID captured from Claude output and reusable across commands via --resume flag
 
@@ -87,10 +87,10 @@ Deferred to future release. Tracked but not in current roadmap.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| TRNS-01 | Phase 1 | Pending |
-| TRNS-02 | Phase 1 | Pending |
-| TRNS-03 | Phase 1 | Pending |
-| TRNS-04 | Phase 1 | Pending |
+| TRNS-01 | Phase 1 | Complete |
+| TRNS-02 | Phase 1 | Complete |
+| TRNS-03 | Phase 1 | Complete |
+| TRNS-04 | Phase 1 | Complete |
 | TRNS-05 | Phase 3 | Pending |
 | TRNS-06 | Phase 3 | Pending |
 | CMD-01 | Phase 2 | Pending |
