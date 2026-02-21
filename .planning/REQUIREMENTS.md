@@ -28,8 +28,8 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Output
 
-- [ ] **OUT-01**: Every command returns JSON with schema: `{success, result, errors, session_id, usage, duration_ms}`
-- [ ] **OUT-02**: JSON output validated against Pydantic models with consistent schema across all commands
+- [x] **OUT-01**: Every command returns JSON with schema: `{success, result, errors, session_id, usage, duration_ms}`
+- [x] **OUT-02**: JSON output validated against Pydantic models with consistent schema across all commands
 - [ ] **OUT-03**: `--output-format` flag supports `json` (default) and `text` (human-readable)
 - [ ] **OUT-04**: Usage metadata includes token count and estimated cost per command invocation
 
@@ -50,10 +50,10 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Packaging
 
-- [ ] **PKG-01**: `pip install openclawpack` provides `openclawpack` CLI binary
-- [ ] **PKG-02**: Requires Python 3.10+ and Claude Code CLI installed
-- [ ] **PKG-03**: Zero required runtime dependencies beyond standard library + Pydantic + Typer + anyio
-- [ ] **PKG-04**: `openclawpack --version` and `openclawpack --help` work without Claude Code installed
+- [x] **PKG-01**: `pip install openclawpack` provides `openclawpack` CLI binary
+- [x] **PKG-02**: Requires Python 3.10+ and Claude Code CLI installed
+- [x] **PKG-03**: Zero required runtime dependencies beyond standard library + Pydantic + Typer + anyio
+- [x] **PKG-04**: `openclawpack --version` and `openclawpack --help` work without Claude Code installed
 
 ## v2 Requirements
 
@@ -100,8 +100,8 @@ Deferred to future release. Tracked but not in current roadmap.
 | CMD-05 | Phase 2 | Pending |
 | CMD-06 | Phase 2 | Pending |
 | CMD-07 | Phase 2 | Pending |
-| OUT-01 | Phase 1 | Pending |
-| OUT-02 | Phase 1 | Pending |
+| OUT-01 | Phase 1 | Complete |
+| OUT-02 | Phase 1 | Complete |
 | OUT-03 | Phase 3 | Pending |
 | OUT-04 | Phase 3 | Pending |
 | STATE-01 | Phase 1 | Pending |
@@ -113,10 +113,10 @@ Deferred to future release. Tracked but not in current roadmap.
 | INT-03 | Phase 4 | Pending |
 | INT-04 | Phase 4 | Pending |
 | INT-05 | Phase 2 | Pending |
-| PKG-01 | Phase 1 | Pending |
-| PKG-02 | Phase 1 | Pending |
-| PKG-03 | Phase 1 | Pending |
-| PKG-04 | Phase 1 | Pending |
+| PKG-01 | Phase 1 | Complete |
+| PKG-02 | Phase 1 | Complete |
+| PKG-03 | Phase 1 | Complete |
+| PKG-04 | Phase 1 | Complete |
 
 **Coverage:**
 - v1 requirements: 30 total
