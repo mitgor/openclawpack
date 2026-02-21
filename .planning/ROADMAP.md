@@ -30,12 +30,12 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. Subprocess failures produce typed exceptions (CLINotFound, ProcessError, TimeoutError, JSONDecodeError) that callers can distinguish programmatically
   4. Calling the state parser on a .planning/ directory returns Pydantic models for config.json, STATE.md, ROADMAP.md, REQUIREMENTS.md, and PROJECT.md
   5. All transport and state operations return JSON matching the standard output schema: {success, result, errors, session_id, usage, duration_ms}
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 01-01: TBD
-- [ ] 01-02: TBD
-- [ ] 01-03: TBD
+- [ ] 01-01-PLAN.md — Package skeleton, CLI entry point, and CommandResult output schema
+- [ ] 01-02-PLAN.md — State parser: Pydantic models and .planning/ file readers
+- [ ] 01-03-PLAN.md — Transport layer: claude-agent-sdk adapter with typed exceptions
 
 ### Phase 2: Core Commands
 **Goal**: An AI agent can run `openclawpack new-project`, `plan-phase`, `execute-phase`, and `status` non-interactively to drive a complete GSD project lifecycle from idea to working code
