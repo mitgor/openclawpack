@@ -25,5 +25,10 @@ dev = [
     "ruff>=0.9",
 ]
 
+[tool.pytest.ini_options]
+markers = [
+    "slow: marks tests as slow (requires Claude Code CLI on PATH)",
+]
+
 [tool.hatch.build.targets.wheel]
 packages = ["src/openclawpack"]
