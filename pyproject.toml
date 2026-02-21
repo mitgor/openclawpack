@@ -1,0 +1,29 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "openclawpack"
+version = "0.1.0"
+description = "AI agent control over the GSD framework via Claude Code"
+requires-python = ">=3.10"
+license = "MIT"
+dependencies = [
+    "pydantic>=2.12",
+    "typer>=0.24",
+    "anyio>=4.8",
+    "claude-agent-sdk>=0.1.39",
+]
+
+[project.scripts]
+openclawpack = "openclawpack.cli:app"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-anyio>=0.0.0",
+    "ruff>=0.9",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/openclawpack"]
