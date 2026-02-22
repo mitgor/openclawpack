@@ -14,7 +14,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation** - Transport layer, typed models, state parsing, and installable package skeleton (completed 2026-02-21)
 - [x] **Phase 2: Core Commands** - Non-interactive GSD commands with workflow engine and answer injection (completed 2026-02-22)
-- [ ] **Phase 2.1: Integration Fixes** - INSERTED: Fix SDK wiring, error propagation, and verbose/quiet forwarding
+- [x] **Phase 2.1: Integration Fixes** - INSERTED: Fix SDK wiring, error propagation, and verbose/quiet forwarding (completed 2026-02-22)
 - [ ] **Phase 3: Reliability** - Retry logic, session continuity, output formats, and cost tracking
 - [ ] **Phase 4: Library API and Events** - Async Python API and lifecycle event hook system
 - [ ] **Phase 5: Multi-Project Management** - Project registry with add/list/remove commands
@@ -121,7 +121,7 @@ Phases execute in numeric order: 1 -> 2 -> 2.1 -> 3 -> 4 -> 5
 |-------|----------------|--------|-----------|
 | 1. Foundation | 3/3 | Complete    | 2026-02-21 |
 | 2. Core Commands | 4/4 | Complete    | 2026-02-22 |
-| 2.1 Integration Fixes | 0/2 | Not started | - |
+| 2.1 Integration Fixes | 0/2 | Complete    | 2026-02-22 |
 | 3. Reliability | 0/2 | Not started | - |
 | 4. Library API and Events | 0/2 | Not started | - |
 | 5. Multi-Project Management | 0/1 | Not started | - |
