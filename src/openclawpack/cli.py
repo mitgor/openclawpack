@@ -73,12 +73,36 @@ def _output(result: object, quiet: bool) -> None:
         typer.echo(result.to_json())  # type: ignore[union-attr]
 
 
+# ── Shared option resolution ────────────────────────────────────
+
+
+def _resolve_options(
+    ctx: typer.Context,
+    project_dir_opt: Optional[str],
+    verbose_opt: bool,
+    quiet_opt: bool,
+) -> tuple[Optional[str], bool, bool]:
+    """Resolve per-command options with fallback to global ctx.obj values."""
+    project_dir = project_dir_opt or ctx.obj.get("project_dir")
+    verbose = verbose_opt or ctx.obj.get("verbose", False)
+    quiet = quiet_opt or ctx.obj.get("quiet", False)
+    return project_dir, verbose, quiet
+
+
 # ── Commands ─────────────────────────────────────────────────────
 
 
 @app.command("new-project")
 def new_project(
-    idea: str = typer.Argument(..., help="Project idea (text or brief description)."),
+    idea: Optional[str] = typer.Argument(
+        None, help="Project idea (text or brief description)."
+    ),
+    idea_opt: Optional[str] = typer.Option(
+        None,
+        "--idea",
+        "-i",
+        help="Project idea as a named option.",
+    ),
     idea_file: Optional[str] = typer.Option(
         None,
         "--idea-file",
@@ -90,11 +114,32 @@ def new_project(
         "--timeout",
         help="Timeout in seconds (overrides default).",
     ),
+    project_dir_opt: Optional[str] = typer.Option(
+        None,
+        "--project-dir",
+        help="Project directory (defaults to cwd).",
+    ),
+    verbose_opt: bool = typer.Option(
+        False,
+        "--verbose",
+        help="Show detailed subprocess output.",
+    ),
+    quiet_opt: bool = typer.Option(
+        False,
+        "--quiet",
+        help="Suppress all non-JSON output.",
+    ),
     ctx: typer.Context = typer.Context,
 ) -> None:
     """Create a new GSD project from an idea, non-interactively."""
-    # Read idea from file if --idea-file provided
-    idea_text = idea
+    # Resolve idea text: --idea option takes precedence over positional arg
+    idea_text: Optional[str] = None
+    if idea_opt is not None:
+        idea_text = idea_opt
+    elif idea is not None:
+        idea_text = idea
+
+    # Read idea from file if --idea-file provided (overrides text)
     if idea_file is not None:
         idea_path = Path(idea_file)
         if not idea_path.is_file():
@@ -102,9 +147,16 @@ def new_project(
             raise typer.Exit(code=1)
         idea_text = idea_path.read_text(encoding="utf-8")
 
-    project_dir = ctx.obj.get("project_dir")
-    verbose = ctx.obj.get("verbose", False)
-    quiet = ctx.obj.get("quiet", False)
+    if idea_text is None:
+        typer.echo(
+            "Error: Provide idea as positional argument or --idea option.",
+            err=True,
+        )
+        raise typer.Exit(code=1)
+
+    project_dir, verbose, quiet = _resolve_options(
+        ctx, project_dir_opt, verbose_opt, quiet_opt
+    )
 
     # Lazy import of workflow function
     from openclawpack.commands.new_project import new_project_workflow
@@ -129,12 +181,27 @@ def plan_phase(
         "--timeout",
         help="Timeout in seconds (overrides default).",
     ),
+    project_dir_opt: Optional[str] = typer.Option(
+        None,
+        "--project-dir",
+        help="Project directory (defaults to cwd).",
+    ),
+    verbose_opt: bool = typer.Option(
+        False,
+        "--verbose",
+        help="Show detailed subprocess output.",
+    ),
+    quiet_opt: bool = typer.Option(
+        False,
+        "--quiet",
+        help="Suppress all non-JSON output.",
+    ),
     ctx: typer.Context = typer.Context,
 ) -> None:
     """Plan a phase non-interactively."""
-    project_dir = ctx.obj.get("project_dir")
-    verbose = ctx.obj.get("verbose", False)
-    quiet = ctx.obj.get("quiet", False)
+    project_dir, verbose, quiet = _resolve_options(
+        ctx, project_dir_opt, verbose_opt, quiet_opt
+    )
 
     # Lazy import of workflow function
     from openclawpack.commands.plan_phase import plan_phase_workflow
@@ -159,12 +226,27 @@ def execute_phase(
         "--timeout",
         help="Timeout in seconds (overrides default).",
     ),
+    project_dir_opt: Optional[str] = typer.Option(
+        None,
+        "--project-dir",
+        help="Project directory (defaults to cwd).",
+    ),
+    verbose_opt: bool = typer.Option(
+        False,
+        "--verbose",
+        help="Show detailed subprocess output.",
+    ),
+    quiet_opt: bool = typer.Option(
+        False,
+        "--quiet",
+        help="Suppress all non-JSON output.",
+    ),
     ctx: typer.Context = typer.Context,
 ) -> None:
     """Execute a phase non-interactively."""
-    project_dir = ctx.obj.get("project_dir")
-    verbose = ctx.obj.get("verbose", False)
-    quiet = ctx.obj.get("quiet", False)
+    project_dir, verbose, quiet = _resolve_options(
+        ctx, project_dir_opt, verbose_opt, quiet_opt
+    )
 
     # Lazy import of workflow function
     from openclawpack.commands.execute_phase import execute_phase_workflow
@@ -183,11 +265,27 @@ def execute_phase(
 
 @app.command()
 def status(
+    project_dir_opt: Optional[str] = typer.Option(
+        None,
+        "--project-dir",
+        help="Project directory (defaults to cwd).",
+    ),
+    verbose_opt: bool = typer.Option(
+        False,
+        "--verbose",
+        help="Show detailed subprocess output.",
+    ),
+    quiet_opt: bool = typer.Option(
+        False,
+        "--quiet",
+        help="Suppress all non-JSON output.",
+    ),
     ctx: typer.Context = typer.Context,
 ) -> None:
     """Show project state as structured JSON."""
-    project_dir = ctx.obj.get("project_dir")
-    quiet = ctx.obj.get("quiet", False)
+    project_dir, _verbose, quiet = _resolve_options(
+        ctx, project_dir_opt, verbose_opt, quiet_opt
+    )
 
     # Lazy import of workflow function
     from openclawpack.commands.status import status_workflow
