@@ -12,9 +12,12 @@
     "clean": "rm -rf dist"
   },
   "openclaw": {
-    "extensions": ["dist/index.js"]
+    "extensions": [
+      "dist/index.js"
+    ]
   },
   "devDependencies": {
+    "@types/node": "^25.3.0",
     "typescript": "^5.7.0",
     "vitest": "^3.0.0"
   },
