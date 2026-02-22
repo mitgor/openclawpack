@@ -19,8 +19,8 @@ Requirements for initial release. Each maps to roadmap phases.
 ### Commands
 
 - [ ] **CMD-01**: `openclawpack new-project --idea <text_or_file>` creates a GSD project non-interactively (PROJECT.md through ROADMAP.md)
-- [ ] **CMD-02**: `openclawpack plan-phase <N>` plans a phase non-interactively
-- [ ] **CMD-03**: `openclawpack execute-phase <N>` executes a phase non-interactively
+- [x] **CMD-02**: `openclawpack plan-phase <N>` plans a phase non-interactively
+- [x] **CMD-03**: `openclawpack execute-phase <N>` executes a phase non-interactively
 - [ ] **CMD-04**: `openclawpack status` returns current project state as structured JSON
 - [x] **CMD-05**: Pre-filled answer injection converts agent-supplied parameters into GSD --auto mode document format
 - [x] **CMD-06**: All commands accept `--project-dir` to specify working directory (defaults to cwd)
@@ -94,8 +94,8 @@ Deferred to future release. Tracked but not in current roadmap.
 | TRNS-05 | Phase 3 | Pending |
 | TRNS-06 | Phase 3 | Pending |
 | CMD-01 | Phase 2 | Pending |
-| CMD-02 | Phase 2 | Pending |
-| CMD-03 | Phase 2 | Pending |
+| CMD-02 | Phase 2 | Complete |
+| CMD-03 | Phase 2 | Complete |
 | CMD-04 | Phase 2 | Pending |
 | CMD-05 | Phase 2 | Complete |
 | CMD-06 | Phase 2 | Complete |
