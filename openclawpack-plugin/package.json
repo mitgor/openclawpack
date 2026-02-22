@@ -1,0 +1,22 @@
+{
+  "name": "@openclawpack/gsd-router",
+  "version": "0.1.0",
+  "description": "OpenClaw plugin that evaluates task complexity and routes medium/hard tasks through GSD via OpenClawPack",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc && cp -r src/bootstrap dist/bootstrap",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "clean": "rm -rf dist"
+  },
+  "openclaw": {
+    "extensions": ["dist/index.js"]
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0"
+  },
+  "license": "MIT"
+}
