@@ -9,10 +9,10 @@ See: .planning/PROJECT.md (updated 2026-02-21)
 
 ## Current Position
 
-Phase: 2 of 5 (Core Commands)
-Plan: 4 of 4 in current phase
-Status: Phase Complete
-Last activity: 2026-02-22 -- Completed 02-04-PLAN.md
+Phase: 2.1 of 5 (Integration Fixes)
+Plan: 1 of 2 in current phase
+Status: In Progress
+Last activity: 2026-02-22 -- Completed 02.1-01-PLAN.md (SDK wiring fixes)
 
 Progress: [███████░░░] 64%
 
@@ -70,6 +70,11 @@ Recent decisions affecting current work:
 - [02-04]: --idea option takes precedence over positional argument when both provided
 - [02-04]: _resolve_options() centralizes per-command/global option fallback to avoid duplication
 - [02-04]: Per-command --project-dir/--verbose/--quiet on all commands for post-subcommand placement
+- [02.1-01]: can_use_tool/hooks set as ClaudeAgentOptions fields, not sdk_query() kwargs
+- [02.1-01]: Prompt wrapped as AsyncIterable when can_use_tool is set (SDK streaming requirement)
+- [02.1-01]: Hook callback uses 3-param signature (input, tool_use_id, context) -> dict
+- [02.1-01]: build_hooks_dict() lazy-imports HookMatcher to preserve PKG-04 compliance
+- [02.1-01]: quiet takes precedence over verbose when both set
 
 ### Pending Todos
 
