@@ -18,6 +18,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 3: Reliability** - Retry logic, session continuity, output formats, and cost tracking (completed 2026-02-22)
 - [x] **Phase 4: Library API and Events** - Async Python API and lifecycle event hook system (completed 2026-02-22)
 - [ ] **Phase 5: Multi-Project Management** - Project registry with add/list/remove commands
+- [ ] **Phase 6: Phase 4 Verification & DECISION_NEEDED Fix** - Close verification gap and wire orphaned event emission
 
 ## Phase Details
 
@@ -113,10 +114,24 @@ Plans:
 - [ ] 05-01-PLAN.md — Registry models, ProjectRegistry CRUD class with atomic persistence (TDD)
 - [ ] 05-02-PLAN.md — CLI projects subcommand group, library API functions, package re-exports
 
+### Phase 6: Phase 4 Verification & DECISION_NEEDED Fix
+**Goal**: Close the Phase 4 verification gap by fixing the orphaned DECISION_NEEDED event emission and producing independent verification for INT-01 through INT-04
+**Depends on**: Phase 4
+**Requirements**: INT-01, INT-02, INT-03, INT-04
+**Gap Closure**: Closes gaps from v1.0 milestone audit
+**Success Criteria** (what must be TRUE):
+  1. `DECISION_NEEDED` events are emitted at an appropriate workflow checkpoint (e.g., when answer injection has no pre-filled answer), and a library consumer subscribing to `decision_needed` receives the callback
+  2. Phase 4 has a VERIFICATION.md that independently confirms INT-01 through INT-04 are satisfied via 3-source cross-reference (code inspection, test evidence, integration check)
+  3. All 5 event types (phase_complete, plan_complete, error, decision_needed, progress_update) have both producers and consumers wired end-to-end
+**Plans**: TBD
+
+Plans:
+- [ ] 06-01-PLAN.md — Add DECISION_NEEDED emission, tests, and Phase 4 VERIFICATION.md
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 2.1 -> 3 -> 4 -> 5
+Phases execute in numeric order: 1 -> 2 -> 2.1 -> 3 -> 4 -> 5 -> 6
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -126,3 +141,4 @@ Phases execute in numeric order: 1 -> 2 -> 2.1 -> 3 -> 4 -> 5
 | 3. Reliability | 2/2 | Complete    | 2026-02-22 |
 | 4. Library API and Events | 2/2 | Complete    | 2026-02-22 |
 | 5. Multi-Project Management | 0/2 | Not started | - |
+| 6. Phase 4 Verification & Fix | 0/1 | Not started | - |
