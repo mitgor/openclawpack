@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-02-21)
 ## Current Position
 
 Phase: 2.1 of 5 (Integration Fixes)
-Plan: 1 of 2 in current phase
-Status: In Progress
-Last activity: 2026-02-22 -- Completed 02.1-01-PLAN.md (SDK wiring fixes)
+Plan: 2 of 2 in current phase
+Status: Phase Complete
+Last activity: 2026-02-22 -- Completed 02.1-02-PLAN.md (engine flag forwarding and error propagation)
 
 Progress: [███████░░░] 64%
 
@@ -75,6 +75,9 @@ Recent decisions affecting current work:
 - [02.1-01]: Hook callback uses 3-param signature (input, tool_use_id, context) -> dict
 - [02.1-01]: build_hooks_dict() lazy-imports HookMatcher to preserve PKG-04 compliance
 - [02.1-01]: quiet takes precedence over verbose when both set
+- [02.1-02]: Engine catches TransportError specifically for structured error handling
+- [02.1-02]: Workflow functions use broad Exception catch as outermost CLI defense
+- [02.1-02]: build_hooks_dict() replaces bare dict hooks in engine for correct SDK structure
 
 ### Pending Todos
 
