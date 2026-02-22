@@ -2,143 +2,37 @@
 
 ## Overview
 
-OpenClawPack delivers AI agent control over the GSD framework through five phases: first building reliable subprocess transport and typed data models as the foundation everything depends on, then layering the GSD-semantic CLI commands that make the tool useful, hardening with retry logic and session management, exposing a Python library API with event hooks for deeper agent integration, and finally adding multi-project management. After Phase 2, the tool is usable end-to-end. Each subsequent phase increases reliability and integration depth.
+OpenClawPack delivers AI agent control over the GSD framework through a CLI and Python library. It translates non-interactive commands into Claude Code subprocess calls that execute GSD skills, returning structured JSON output for fully autonomous project lifecycle management.
+
+## Milestones
+
+- ✅ **v1.0 Initial Release** — Phases 1-6 (shipped 2026-02-22)
 
 ## Phases
 
-**Phase Numbering:**
-- Integer phases (1, 2, 3): Planned milestone work
-- Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
+<details>
+<summary>✅ v1.0 Initial Release (Phases 1-6) — SHIPPED 2026-02-22</summary>
 
-Decimal phases appear between their surrounding integers in numeric order.
+- [x] Phase 1: Foundation (3/3 plans) — completed 2026-02-21
+- [x] Phase 2: Core Commands (4/4 plans) — completed 2026-02-22
+- [x] Phase 2.1: Integration Fixes (2/2 plans) — completed 2026-02-22
+- [x] Phase 3: Reliability (2/2 plans) — completed 2026-02-22
+- [x] Phase 4: Library API and Events (2/2 plans) — completed 2026-02-22
+- [x] Phase 5: Multi-Project Management (2/2 plans) — completed 2026-02-22
+- [x] Phase 6: Phase 4 Verification & Fix (1/1 plan) — completed 2026-02-22
 
-- [x] **Phase 1: Foundation** - Transport layer, typed models, state parsing, and installable package skeleton (completed 2026-02-21)
-- [x] **Phase 2: Core Commands** - Non-interactive GSD commands with workflow engine and answer injection (completed 2026-02-22)
-- [x] **Phase 2.1: Integration Fixes** - INSERTED: Fix SDK wiring, error propagation, and verbose/quiet forwarding (completed 2026-02-22)
-- [x] **Phase 3: Reliability** - Retry logic, session continuity, output formats, and cost tracking (completed 2026-02-22)
-- [x] **Phase 4: Library API and Events** - Async Python API and lifecycle event hook system (completed 2026-02-22)
-- [ ] **Phase 5: Multi-Project Management** - Project registry with add/list/remove commands
-- [x] **Phase 6: Phase 4 Verification & DECISION_NEEDED Fix** - Close verification gap and wire orphaned event emission (completed 2026-02-22)
+**30/30 requirements satisfied | 16 plans | 7 phases | Full details: milestones/v1.0-ROADMAP.md**
 
-## Phase Details
-
-### Phase 1: Foundation
-**Goal**: A developer can install the package, spawn a Claude Code subprocess, parse .planning/ files into typed Python objects, and get structured JSON output with proper error handling
-**Depends on**: Nothing (first phase)
-**Requirements**: TRNS-01, TRNS-02, TRNS-03, TRNS-04, STATE-01, STATE-02, OUT-01, OUT-02, PKG-01, PKG-02, PKG-03, PKG-04
-**Success Criteria** (what must be TRUE):
-  1. Running `pip install .` in the repo installs `openclawpack` CLI binary, and `openclawpack --version` and `openclawpack --help` work without Claude Code installed
-  2. The transport layer can spawn a Claude Code subprocess, stream stdout/stderr concurrently without deadlocks, and terminate gracefully on timeout
-  3. Subprocess failures produce typed exceptions (CLINotFound, ProcessError, TimeoutError, JSONDecodeError) that callers can distinguish programmatically
-  4. Calling the state parser on a .planning/ directory returns Pydantic models for config.json, STATE.md, ROADMAP.md, REQUIREMENTS.md, and PROJECT.md
-  5. All transport and state operations return JSON matching the standard output schema: {success, result, errors, session_id, usage, duration_ms}
-**Plans**: 3 plans
-
-Plans:
-- [x] 01-01-PLAN.md — Package skeleton, CLI entry point, and CommandResult output schema
-- [x] 01-02-PLAN.md — State parser: Pydantic models and .planning/ file readers
-- [ ] 01-03-PLAN.md — Transport layer: claude-agent-sdk adapter with typed exceptions
-
-### Phase 2: Core Commands
-**Goal**: An AI agent can run `openclawpack new-project`, `plan-phase`, `execute-phase`, and `status` non-interactively to drive a complete GSD project lifecycle from idea to working code
-**Depends on**: Phase 1
-**Requirements**: CMD-01, CMD-02, CMD-03, CMD-04, CMD-05, CMD-06, CMD-07, INT-05
-**Success Criteria** (what must be TRUE):
-  1. Running `openclawpack new-project --idea "build a todo app"` produces a .planning/ directory with PROJECT.md, REQUIREMENTS.md, and ROADMAP.md -- without any human interaction
-  2. Running `openclawpack plan-phase 1` and `openclawpack execute-phase 1` on a project drives GSD planning and execution for that phase, with all interactive prompts handled via pre-filled answer injection
-  3. Running `openclawpack status --project-dir /path/to/project` returns structured JSON showing current phase, progress, and requirement completion
-  4. All commands accept `--verbose` for detailed subprocess output and `--quiet` for minimal output, and default to structured JSON on stdout
-**Plans**: 4 plans
-
-Plans:
-- [x] 02-01-PLAN.md — Transport extension, answer injection engine, workflow engine, and CLI command dispatchers
-- [x] 02-02-PLAN.md — Status and new-project command workflows
-- [x] 02-03-PLAN.md — Plan-phase and execute-phase command workflows
-- [ ] 02-04-PLAN.md — Gap closure: CLI flag fixes (--idea option, per-command shared options)
-
-### Phase 2.1: Integration Fixes
-**Goal**: All non-interactive commands (new-project, plan-phase, execute-phase) work end-to-end at runtime with correct SDK wiring, structured error output, and effective verbose/quiet flags
-**Depends on**: Phase 2
-**Requirements**: CMD-05, CMD-07
-**Gap Closure**: Closes integration gaps from v1.0 milestone audit
-**Success Criteria** (what must be TRUE):
-  1. Running `openclawpack new-project --idea "build a todo app"` with answer injection reaches the SDK without TypeError — `can_use_tool` and `hooks` are set on `ClaudeAgentOptions`, not passed as kwargs to `sdk_query()`
-  2. When Claude Code CLI is not installed, running any command returns `{"success": false, "errors": ["..."]}` structured JSON instead of a Python traceback
-  3. Running `openclawpack new-project --verbose "build a todo app"` causes the SDK to emit debug output (verbose flag forwarded to transport layer)
-  4. Test mocks for `sdk_query` enforce the real function signature and reject unexpected kwargs
-**Plans**: 2 plans
-
-Plans:
-- [ ] 02.1-01-PLAN.md — Fix SDK wiring: can_use_tool/hooks on ClaudeAgentOptions, AsyncIterable prompt, HookMatcher structure, strict test mocks
-- [ ] 02.1-02-PLAN.md — Error propagation, verbose forwarding, build_hooks_dict() in engine, workflow-level error catching
-
-### Phase 3: Reliability
-**Goal**: Commands survive transient failures, maintain conversation context across multi-step workflows, and report cost/token usage to enable agent budget management
-**Depends on**: Phase 2
-**Requirements**: TRNS-05, TRNS-06, OUT-03, OUT-04
-**Success Criteria** (what must be TRUE):
-  1. When a Claude Code subprocess fails due to rate limits or transient errors, the command retries with exponential backoff and eventually succeeds or reports a clear final failure
-  2. A multi-step workflow (new-project followed by plan-phase) can resume the same Claude session via captured session ID, maintaining conversation context
-  3. Running any command with `--output-format text` produces human-readable output instead of JSON
-  4. Every command response includes token count and estimated cost in the usage metadata field
-**Plans**: 2 plans
-
-Plans:
-- [x] 03-01-PLAN.md — Retry logic with exponential backoff and session resume via --resume flag
-- [x] 03-02-PLAN.md — Text output formatter, --output-format flag, and usage metadata enrichment with cost
-
-### Phase 4: Library API and Events
-**Goal**: Python agents (OpenClaw) can import openclawpack as a library, call async functions that return typed models, and subscribe to lifecycle events for reactive behavior
-**Depends on**: Phase 3
-**Requirements**: INT-01, INT-02, INT-03, INT-04
-**Success Criteria** (what must be TRUE):
-  1. A Python script can `from openclawpack import create_project, plan_phase, execute_phase, get_status` and call them as async functions that return typed Pydantic models
-  2. Library consumers can register callbacks for phase_complete, plan_complete, error, decision_needed, and progress_update events
-  3. Event hooks fire in both library mode (Python callbacks) and CLI mode (JSON event lines to stderr)
-**Plans**: 2 plans
-
-Plans:
-- [x] 04-01-PLAN.md — Event system (EventBus, EventType, Event models, CLI handler) and ProjectStatus typed model
-- [x] 04-02-PLAN.md — Library API facade (api.py with async functions), __init__.py re-exports, CLI event integration
-
-### Phase 5: Multi-Project Management
-**Goal**: An agent can register, track, and manage multiple GSD projects simultaneously through a persistent project registry
-**Depends on**: Phase 2
-**Requirements**: STATE-03, STATE-04
-**Success Criteria** (what must be TRUE):
-  1. Running `openclawpack projects add /path/to/project` registers a project, and `openclawpack projects list` shows all registered projects with their paths and last-known state
-  2. Running `openclawpack projects remove <name>` deregisters a project, and the registry persists across CLI invocations
-**Plans**: 2 plans
-
-Plans:
-- [ ] 05-01-PLAN.md — Registry models, ProjectRegistry CRUD class with atomic persistence (TDD)
-- [ ] 05-02-PLAN.md — CLI projects subcommand group, library API functions, package re-exports
-
-### Phase 6: Phase 4 Verification & DECISION_NEEDED Fix
-**Goal**: Close the Phase 4 verification gap by fixing the orphaned DECISION_NEEDED event emission and producing independent verification for INT-01 through INT-04
-**Depends on**: Phase 4
-**Requirements**: INT-01, INT-02, INT-03, INT-04
-**Gap Closure**: Closes gaps from v1.0 milestone audit
-**Success Criteria** (what must be TRUE):
-  1. `DECISION_NEEDED` events are emitted at an appropriate workflow checkpoint (e.g., when answer injection has no pre-filled answer), and a library consumer subscribing to `decision_needed` receives the callback
-  2. Phase 4 has a VERIFICATION.md that independently confirms INT-01 through INT-04 are satisfied via 3-source cross-reference (code inspection, test evidence, integration check)
-  3. All 5 event types (phase_complete, plan_complete, error, decision_needed, progress_update) have both producers and consumers wired end-to-end
-**Plans**: 1 plan
-
-Plans:
-- [ ] 06-01-PLAN.md — Add DECISION_NEEDED emission, tests, Phase 4 VERIFICATION.md, and REQUIREMENTS.md traceability fix
+</details>
 
 ## Progress
 
-**Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 2.1 -> 3 -> 4 -> 5 -> 6
-
-| Phase | Plans Complete | Status | Completed |
-|-------|----------------|--------|-----------|
-| 1. Foundation | 3/3 | Complete    | 2026-02-21 |
-| 2. Core Commands | 4/4 | Complete    | 2026-02-22 |
-| 2.1 Integration Fixes | 0/2 | Complete    | 2026-02-22 |
-| 3. Reliability | 2/2 | Complete    | 2026-02-22 |
-| 4. Library API and Events | 2/2 | Complete    | 2026-02-22 |
-| 5. Multi-Project Management | 0/2 | Not started | - |
-| 6. Phase 4 Verification & Fix | 0/1 | Complete    | 2026-02-22 |
+| Phase | Milestone | Plans Complete | Status | Completed |
+|-------|-----------|----------------|--------|-----------|
+| 1. Foundation | v1.0 | 3/3 | Complete | 2026-02-21 |
+| 2. Core Commands | v1.0 | 4/4 | Complete | 2026-02-22 |
+| 2.1 Integration Fixes | v1.0 | 2/2 | Complete | 2026-02-22 |
+| 3. Reliability | v1.0 | 2/2 | Complete | 2026-02-22 |
+| 4. Library API and Events | v1.0 | 2/2 | Complete | 2026-02-22 |
+| 5. Multi-Project Management | v1.0 | 2/2 | Complete | 2026-02-22 |
+| 6. Phase 4 Verification & Fix | v1.0 | 1/1 | Complete | 2026-02-22 |
