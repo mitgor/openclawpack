@@ -42,10 +42,10 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Integration
 
-- [ ] **INT-01**: Python library API exposes async functions: `create_project()`, `plan_phase()`, `execute_phase()`, `get_status()`
-- [ ] **INT-02**: Library returns typed Pydantic models, not raw dicts
-- [ ] **INT-03**: Event hook system fires callbacks on: phase_complete, plan_complete, error, decision_needed, progress_update
-- [ ] **INT-04**: Hooks work in both library mode (Python callbacks) and CLI mode (JSON events to stderr)
+- [x] **INT-01**: Python library API exposes async functions: `create_project()`, `plan_phase()`, `execute_phase()`, `get_status()`
+- [x] **INT-02**: Library returns typed Pydantic models, not raw dicts
+- [x] **INT-03**: Event hook system fires callbacks on: phase_complete, plan_complete, error, decision_needed, progress_update
+- [x] **INT-04**: Hooks work in both library mode (Python callbacks) and CLI mode (JSON events to stderr)
 - [x] **INT-05**: GSD workflow engine translates high-level commands into correct sequence of Claude Code invocations with proper GSD skill triggers
 
 ### Packaging
@@ -108,10 +108,10 @@ Deferred to future release. Tracked but not in current roadmap.
 | STATE-02 | Phase 1 | Complete |
 | STATE-03 | Phase 5 | Complete |
 | STATE-04 | Phase 5 | Complete |
-| INT-01 | Phase 6 | Pending |
-| INT-02 | Phase 6 | Pending |
-| INT-03 | Phase 6 | Pending |
-| INT-04 | Phase 6 | Pending |
+| INT-01 | Phase 4 | Complete |
+| INT-02 | Phase 4 | Complete |
+| INT-03 | Phase 4 | Complete |
+| INT-04 | Phase 4 | Complete |
 | INT-05 | Phase 2 | Complete |
 | PKG-01 | Phase 1 | Complete |
 | PKG-02 | Phase 1 | Complete |
