@@ -16,7 +16,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 2: Core Commands** - Non-interactive GSD commands with workflow engine and answer injection (completed 2026-02-22)
 - [x] **Phase 2.1: Integration Fixes** - INSERTED: Fix SDK wiring, error propagation, and verbose/quiet forwarding (completed 2026-02-22)
 - [x] **Phase 3: Reliability** - Retry logic, session continuity, output formats, and cost tracking (completed 2026-02-22)
-- [ ] **Phase 4: Library API and Events** - Async Python API and lifecycle event hook system
+- [x] **Phase 4: Library API and Events** - Async Python API and lifecycle event hook system (completed 2026-02-22)
 - [ ] **Phase 5: Multi-Project Management** - Project registry with add/list/remove commands
 
 ## Phase Details
@@ -97,8 +97,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 04-01-PLAN.md — Event system (EventBus, EventType, Event models, CLI handler) and ProjectStatus typed model
-- [ ] 04-02-PLAN.md — Library API facade (api.py with async functions), __init__.py re-exports, CLI event integration
+- [x] 04-01-PLAN.md — Event system (EventBus, EventType, Event models, CLI handler) and ProjectStatus typed model
+- [x] 04-02-PLAN.md — Library API facade (api.py with async functions), __init__.py re-exports, CLI event integration
 
 ### Phase 5: Multi-Project Management
 **Goal**: An agent can register, track, and manage multiple GSD projects simultaneously through a persistent project registry
@@ -107,10 +107,11 @@ Plans:
 **Success Criteria** (what must be TRUE):
   1. Running `openclawpack projects add /path/to/project` registers a project, and `openclawpack projects list` shows all registered projects with their paths and last-known state
   2. Running `openclawpack projects remove <name>` deregisters a project, and the registry persists across CLI invocations
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 05-01: TBD
+- [ ] 05-01-PLAN.md — Registry models, ProjectRegistry CRUD class with atomic persistence (TDD)
+- [ ] 05-02-PLAN.md — CLI projects subcommand group, library API functions, package re-exports
 
 ## Progress
 
@@ -123,5 +124,5 @@ Phases execute in numeric order: 1 -> 2 -> 2.1 -> 3 -> 4 -> 5
 | 2. Core Commands | 4/4 | Complete    | 2026-02-22 |
 | 2.1 Integration Fixes | 0/2 | Complete    | 2026-02-22 |
 | 3. Reliability | 2/2 | Complete    | 2026-02-22 |
-| 4. Library API and Events | 0/2 | Not started | - |
-| 5. Multi-Project Management | 0/1 | Not started | - |
+| 4. Library API and Events | 2/2 | Complete    | 2026-02-22 |
+| 5. Multi-Project Management | 0/2 | Not started | - |
