@@ -37,7 +37,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [x] **STATE-01**: Parse .planning/config.json, STATE.md, ROADMAP.md, REQUIREMENTS.md, and PROJECT.md without subprocess
 - [x] **STATE-02**: State queries return structured data: current phase, progress percentage, blocker list, requirement completion
-- [ ] **STATE-03**: Multi-project registry tracks registered projects with paths and last-known state
+- [x] **STATE-03**: Multi-project registry tracks registered projects with paths and last-known state
 - [ ] **STATE-04**: Projects can be registered, listed, and removed via `openclawpack projects add/list/remove`
 
 ### Integration
@@ -106,7 +106,7 @@ Deferred to future release. Tracked but not in current roadmap.
 | OUT-04 | Phase 3 | Pending |
 | STATE-01 | Phase 1 | Complete |
 | STATE-02 | Phase 1 | Complete |
-| STATE-03 | Phase 5 | Pending |
+| STATE-03 | Phase 5 | Complete |
 | STATE-04 | Phase 5 | Pending |
 | INT-01 | Phase 4 | Pending |
 | INT-02 | Phase 4 | Pending |

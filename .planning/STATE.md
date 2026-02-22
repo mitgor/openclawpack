@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-21)
 
 **Core value:** An AI agent can go from "build me a todo app" to a fully planned GSD project with roadmap, without any human interaction.
-**Current focus:** Phase 3: Reliability
+**Current focus:** Phase 5: Multi-Project Management
 
 ## Current Position
 
-Phase: 3 of 5 (Reliability)
-Plan: Not started
-Status: Ready to plan
-Last activity: 2026-02-22 -- Phase 2.1 gap closure complete, transitioning to Phase 3
+Phase: 5 of 5 (Multi-Project Management)
+Plan: 1 of 2 complete
+Status: In progress
+Last activity: 2026-02-22 -- Plan 05-01 registry data layer complete
 
-Progress: [███████░░░] 64%
+Progress: [██████████] 97%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 9
+- Total plans completed: 14
 - Average duration: 4min
-- Total execution time: 0.50 hours
+- Total execution time: 0.94 hours
 
 **By Phase:**
 
@@ -30,9 +30,12 @@ Progress: [███████░░░] 64%
 | 1-Foundation | 01-01, 01-02, 01-03 | 12min | 4min |
 | 2-Core Commands | 02-01, 02-02, 02-03, 02-04 | 14min | 4min |
 | 2.1-Integration Fixes | 02.1-01, 02.1-02 | 8min | 4min |
+| 3-Reliability | 03-01, 03-02 | 8min | 4min |
+| 4-Library API and Events | 04-01, 04-02 | 10min | 5min |
+| 5-Multi-Project Management | 05-01 | 4min | 4min |
 
 **Recent Trend:**
-- Last 5 plans: 02-02 (3min), 02-03 (3min), 02-04 (3min), 02.1-01 (4min), 02.1-02 (4min)
+- Last 5 plans: 03-01 (4min), 03-02 (4min), 04-01 (5min), 04-02 (5min), 05-01 (4min)
 - Trend: stable
 
 *Updated after each plan completion*
@@ -79,6 +82,31 @@ Recent decisions affecting current work:
 - [02.1-02]: Engine catches TransportError specifically for structured error handling
 - [02.1-02]: Workflow functions use broad Exception catch as outermost CLI defense
 - [02.1-02]: build_hooks_dict() replaces bare dict hooks in engine for correct SDK structure
+- [03-01]: Retry logic lives at transport level (ClaudeTransport.run wrapping _run_once) -- every workflow benefits
+- [03-01]: is_retryable() returns False for CLINotFound, JSONDecodeError, TransportTimeout; True for ConnectionError_, ProcessError
+- [03-01]: Exponential backoff with jitter: min(base * 2^attempt, max) + uniform(-jitter, +jitter), clamped to >= 0
+- [03-01]: RetryPolicy is a dataclass (consistent with TransportConfig convention)
+- [03-01]: resume_session_id is per-call (not config-level) -- flows CLI -> workflow -> engine -> transport -> SDK
+- [03-02]: format_text() uses comma-formatted numbers and $0.0000 cost display
+- [03-02]: --output-format is a global CLI option on app callback, read from ctx.obj
+- [03-02]: Status command fills usage with zeros when None (prevents downstream KeyError)
+- [04-01]: EventType is a str, Enum with 5 lowercase string values for JSON serialization
+- [04-01]: EventBus uses defaultdict(list) for _handlers, supports both sync and async handlers
+- [04-01]: Handler exceptions are logged (not propagated) -- emit never crashes the caller
+- [04-01]: emit() skips async handlers with a warning; emit_async() handles both
+- [04-01]: cli_json_handler writes "event: {json}" to stderr (not stdout) to avoid conflicting with structured output
+- [04-01]: ProjectStatus model added to output/schema.py alongside CommandResult
+- [04-02]: api.py functions use lazy imports inside bodies to preserve PKG-04
+- [04-02]: Each API function accepts optional event_bus and creates a default EventBus if None
+- [04-02]: get_status converts raw dict result to ProjectStatus model via try/except (graceful fallback)
+- [04-02]: __init__.py uses __getattr__ for lazy re-exports -- imports don't trigger SDK loading
+- [04-02]: _make_cli_bus() creates EventBus with cli_json_handler on all 5 event types
+- [04-02]: CLI commands (new-project, plan-phase, execute-phase) call api.py functions with _make_cli_bus() when not quiet
+- [04-02]: Status command unchanged -- local-only, no event emission needed
+- [05-01]: ProjectRegistry uses classmethod load() factory instead of __init__ for clean empty-or-file construction
+- [05-01]: Atomic write uses tempfile.mkstemp + os.replace (not NamedTemporaryFile) for explicit fd control and fsync
+- [05-01]: State snapshot in add() gracefully falls back to None if get_project_summary() fails
+- [05-01]: _user_data_dir() uses stdlib only (sys.platform + os.environ) to respect PKG-03 zero-dep constraint
 
 ### Pending Todos
 
@@ -92,5 +120,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: Phase 2.1 complete, ready to plan Phase 3 (Reliability)
+Stopped at: Completed 05-01-PLAN.md (registry data layer)
 Resume file: None
