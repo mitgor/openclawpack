@@ -60,6 +60,12 @@ async def create_project(
     from openclawpack.commands.new_project import new_project_workflow
 
     bus = event_bus or EventBus()
+    if not answer_overrides:
+        await bus.emit_async(EventType.DECISION_NEEDED, {
+            "command": "create_project",
+            "reason": "using_default_answers",
+            "message": "Project creation using default GSD configuration answers",
+        })
     result = await new_project_workflow(
         idea=idea,
         project_dir=project_dir,
@@ -115,6 +121,12 @@ async def plan_phase(
     from openclawpack.commands.plan_phase import plan_phase_workflow
 
     bus = event_bus or EventBus()
+    if not answer_overrides:
+        await bus.emit_async(EventType.DECISION_NEEDED, {
+            "command": "plan_phase",
+            "reason": "using_default_answers",
+            "message": "Phase planning using default GSD confirmation answers",
+        })
     result = await plan_phase_workflow(
         phase=phase,
         project_dir=project_dir,
@@ -171,6 +183,12 @@ async def execute_phase(
     from openclawpack.commands.execute_phase import execute_phase_workflow
 
     bus = event_bus or EventBus()
+    if not answer_overrides:
+        await bus.emit_async(EventType.DECISION_NEEDED, {
+            "command": "execute_phase",
+            "reason": "using_default_answers",
+            "message": "Phase execution using default GSD checkpoint answers",
+        })
     result = await execute_phase_workflow(
         phase=phase,
         project_dir=project_dir,

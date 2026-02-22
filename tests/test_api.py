@@ -119,6 +119,46 @@ class TestCreateProject:
             result = await create_project("build a todo app")
         assert result.success is True
 
+    @pytest.mark.anyio
+    async def test_emits_decision_needed_when_no_overrides(self) -> None:
+        from openclawpack.api import create_project
+
+        bus = EventBus()
+        captured: list[Event] = []
+        bus.on(EventType.DECISION_NEEDED, lambda e: captured.append(e))
+
+        with patch(
+            _NEW_PROJECT_WF,
+            new_callable=AsyncMock,
+            return_value=_ok_result(),
+        ):
+            await create_project("build a todo app", event_bus=bus)
+
+        assert len(captured) == 1
+        assert captured[0].type == EventType.DECISION_NEEDED
+        assert captured[0].data["command"] == "create_project"
+
+    @pytest.mark.anyio
+    async def test_no_decision_needed_when_overrides_provided(self) -> None:
+        from openclawpack.api import create_project
+
+        bus = EventBus()
+        captured: list[Event] = []
+        bus.on(EventType.DECISION_NEEDED, lambda e: captured.append(e))
+
+        with patch(
+            _NEW_PROJECT_WF,
+            new_callable=AsyncMock,
+            return_value=_ok_result(),
+        ):
+            await create_project(
+                "build a todo app",
+                answer_overrides={"key": "val"},
+                event_bus=bus,
+            )
+
+        assert len(captured) == 0
+
     def test_idea_is_required_parameter(self) -> None:
         from openclawpack.api import create_project
 
@@ -187,6 +227,42 @@ class TestPlanPhase:
         assert len(captured) == 1
         assert captured[0].type == EventType.ERROR
 
+    @pytest.mark.anyio
+    async def test_emits_decision_needed_when_no_overrides(self) -> None:
+        from openclawpack.api import plan_phase
+
+        bus = EventBus()
+        captured: list[Event] = []
+        bus.on(EventType.DECISION_NEEDED, lambda e: captured.append(e))
+
+        with patch(
+            _PLAN_PHASE_WF,
+            new_callable=AsyncMock,
+            return_value=_ok_result(),
+        ):
+            await plan_phase(1, event_bus=bus)
+
+        assert len(captured) == 1
+        assert captured[0].type == EventType.DECISION_NEEDED
+        assert captured[0].data["command"] == "plan_phase"
+
+    @pytest.mark.anyio
+    async def test_no_decision_needed_when_overrides_provided(self) -> None:
+        from openclawpack.api import plan_phase
+
+        bus = EventBus()
+        captured: list[Event] = []
+        bus.on(EventType.DECISION_NEEDED, lambda e: captured.append(e))
+
+        with patch(
+            _PLAN_PHASE_WF,
+            new_callable=AsyncMock,
+            return_value=_ok_result(),
+        ):
+            await plan_phase(1, answer_overrides={"key": "val"}, event_bus=bus)
+
+        assert len(captured) == 0
+
 
 # ── execute_phase ────────────────────────────────────────────────
 
@@ -247,6 +323,44 @@ class TestExecutePhase:
 
         assert len(captured) == 1
         assert captured[0].type == EventType.ERROR
+
+    @pytest.mark.anyio
+    async def test_emits_decision_needed_when_no_overrides(self) -> None:
+        from openclawpack.api import execute_phase
+
+        bus = EventBus()
+        captured: list[Event] = []
+        bus.on(EventType.DECISION_NEEDED, lambda e: captured.append(e))
+
+        with patch(
+            _EXECUTE_PHASE_WF,
+            new_callable=AsyncMock,
+            return_value=_ok_result(),
+        ):
+            await execute_phase(1, event_bus=bus)
+
+        assert len(captured) == 1
+        assert captured[0].type == EventType.DECISION_NEEDED
+        assert captured[0].data["command"] == "execute_phase"
+
+    @pytest.mark.anyio
+    async def test_no_decision_needed_when_overrides_provided(self) -> None:
+        from openclawpack.api import execute_phase
+
+        bus = EventBus()
+        captured: list[Event] = []
+        bus.on(EventType.DECISION_NEEDED, lambda e: captured.append(e))
+
+        with patch(
+            _EXECUTE_PHASE_WF,
+            new_callable=AsyncMock,
+            return_value=_ok_result(),
+        ):
+            await execute_phase(
+                1, answer_overrides={"key": "val"}, event_bus=bus,
+            )
+
+        assert len(captured) == 0
 
 
 # ── get_status ───────────────────────────────────────────────────
