@@ -13,7 +13,7 @@ OpenClawPack delivers AI agent control over the GSD framework through five phase
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation** - Transport layer, typed models, state parsing, and installable package skeleton (completed 2026-02-21)
-- [x] **Phase 2: Core Commands** - Non-interactive GSD commands with workflow engine and answer injection (completed 2026-02-22)
+- [ ] **Phase 2: Core Commands** - Non-interactive GSD commands with workflow engine and answer injection
 - [ ] **Phase 3: Reliability** - Retry logic, session continuity, output formats, and cost tracking
 - [ ] **Phase 4: Library API and Events** - Async Python API and lifecycle event hook system
 - [ ] **Phase 5: Multi-Project Management** - Project registry with add/list/remove commands
@@ -46,12 +46,13 @@ Plans:
   2. Running `openclawpack plan-phase 1` and `openclawpack execute-phase 1` on a project drives GSD planning and execution for that phase, with all interactive prompts handled via pre-filled answer injection
   3. Running `openclawpack status --project-dir /path/to/project` returns structured JSON showing current phase, progress, and requirement completion
   4. All commands accept `--verbose` for detailed subprocess output and `--quiet` for minimal output, and default to structured JSON on stdout
-**Plans**: 3 plans
+**Plans**: 4 plans
 
 Plans:
-- [ ] 02-01-PLAN.md — Transport extension, answer injection engine, workflow engine, and CLI command dispatchers
-- [ ] 02-02-PLAN.md — Status and new-project command workflows
-- [ ] 02-03-PLAN.md — Plan-phase and execute-phase command workflows
+- [x] 02-01-PLAN.md — Transport extension, answer injection engine, workflow engine, and CLI command dispatchers
+- [x] 02-02-PLAN.md — Status and new-project command workflows
+- [x] 02-03-PLAN.md — Plan-phase and execute-phase command workflows
+- [ ] 02-04-PLAN.md — Gap closure: CLI flag fixes (--idea option, per-command shared options)
 
 ### Phase 3: Reliability
 **Goal**: Commands survive transient failures, maintain conversation context across multi-step workflows, and report cost/token usage to enable agent budget management
@@ -102,7 +103,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 2/3 | Complete    | 2026-02-21 |
-| 2. Core Commands | 3/3 | Complete   | 2026-02-22 |
+| 2. Core Commands | 3/4 | In progress | - |
 | 3. Reliability | 0/2 | Not started | - |
 | 4. Library API and Events | 0/2 | Not started | - |
 | 5. Multi-Project Management | 0/1 | Not started | - |
