@@ -18,7 +18,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 3: Reliability** - Retry logic, session continuity, output formats, and cost tracking (completed 2026-02-22)
 - [x] **Phase 4: Library API and Events** - Async Python API and lifecycle event hook system (completed 2026-02-22)
 - [ ] **Phase 5: Multi-Project Management** - Project registry with add/list/remove commands
-- [ ] **Phase 6: Phase 4 Verification & DECISION_NEEDED Fix** - Close verification gap and wire orphaned event emission
+- [x] **Phase 6: Phase 4 Verification & DECISION_NEEDED Fix** - Close verification gap and wire orphaned event emission (completed 2026-02-22)
 
 ## Phase Details
 
@@ -141,4 +141,4 @@ Phases execute in numeric order: 1 -> 2 -> 2.1 -> 3 -> 4 -> 5 -> 6
 | 3. Reliability | 2/2 | Complete    | 2026-02-22 |
 | 4. Library API and Events | 2/2 | Complete    | 2026-02-22 |
 | 5. Multi-Project Management | 0/2 | Not started | - |
-| 6. Phase 4 Verification & Fix | 0/1 | Not started | - |
+| 6. Phase 4 Verification & Fix | 0/1 | Complete    | 2026-02-22 |
