@@ -14,6 +14,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation** - Transport layer, typed models, state parsing, and installable package skeleton (completed 2026-02-21)
 - [x] **Phase 2: Core Commands** - Non-interactive GSD commands with workflow engine and answer injection (completed 2026-02-22)
+- [ ] **Phase 2.1: Integration Fixes** - INSERTED: Fix SDK wiring, error propagation, and verbose/quiet forwarding
 - [ ] **Phase 3: Reliability** - Retry logic, session continuity, output formats, and cost tracking
 - [ ] **Phase 4: Library API and Events** - Async Python API and lifecycle event hook system
 - [ ] **Phase 5: Multi-Project Management** - Project registry with add/list/remove commands
@@ -53,6 +54,21 @@ Plans:
 - [x] 02-02-PLAN.md — Status and new-project command workflows
 - [x] 02-03-PLAN.md — Plan-phase and execute-phase command workflows
 - [ ] 02-04-PLAN.md — Gap closure: CLI flag fixes (--idea option, per-command shared options)
+
+### Phase 2.1: Integration Fixes
+**Goal**: All non-interactive commands (new-project, plan-phase, execute-phase) work end-to-end at runtime with correct SDK wiring, structured error output, and effective verbose/quiet flags
+**Depends on**: Phase 2
+**Requirements**: CMD-05, CMD-07
+**Gap Closure**: Closes integration gaps from v1.0 milestone audit
+**Success Criteria** (what must be TRUE):
+  1. Running `openclawpack new-project --idea "build a todo app"` with answer injection reaches the SDK without TypeError — `can_use_tool` and `hooks` are set on `ClaudeAgentOptions`, not passed as kwargs to `sdk_query()`
+  2. When Claude Code CLI is not installed, running any command returns `{"success": false, "errors": ["..."]}` structured JSON instead of a Python traceback
+  3. Running `openclawpack new-project --verbose "build a todo app"` causes the SDK to emit debug output (verbose flag forwarded to transport layer)
+  4. Test mocks for `sdk_query` enforce the real function signature and reject unexpected kwargs
+**Plans**: TBD
+
+Plans:
+- [ ] 02.1-01: TBD
 
 ### Phase 3: Reliability
 **Goal**: Commands survive transient failures, maintain conversation context across multi-step workflows, and report cost/token usage to enable agent budget management
@@ -98,12 +114,13 @@ Plans:
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
+Phases execute in numeric order: 1 -> 2 -> 2.1 -> 3 -> 4 -> 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 2/3 | Complete    | 2026-02-21 |
-| 2. Core Commands | 3/4 | Complete    | 2026-02-22 |
+| 1. Foundation | 3/3 | Complete    | 2026-02-21 |
+| 2. Core Commands | 4/4 | Complete    | 2026-02-22 |
+| 2.1 Integration Fixes | 0/1 | Not started | - |
 | 3. Reliability | 0/2 | Not started | - |
 | 4. Library API and Events | 0/2 | Not started | - |
 | 5. Multi-Project Management | 0/1 | Not started | - |
