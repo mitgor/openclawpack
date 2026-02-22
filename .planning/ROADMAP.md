@@ -123,10 +123,10 @@ Plans:
   1. `DECISION_NEEDED` events are emitted at an appropriate workflow checkpoint (e.g., when answer injection has no pre-filled answer), and a library consumer subscribing to `decision_needed` receives the callback
   2. Phase 4 has a VERIFICATION.md that independently confirms INT-01 through INT-04 are satisfied via 3-source cross-reference (code inspection, test evidence, integration check)
   3. All 5 event types (phase_complete, plan_complete, error, decision_needed, progress_update) have both producers and consumers wired end-to-end
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 06-01-PLAN.md — Add DECISION_NEEDED emission, tests, and Phase 4 VERIFICATION.md
+- [ ] 06-01-PLAN.md — Add DECISION_NEEDED emission, tests, Phase 4 VERIFICATION.md, and REQUIREMENTS.md traceability fix
 
 ## Progress
 
