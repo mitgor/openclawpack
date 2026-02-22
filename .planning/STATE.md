@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-21)
 
 **Core value:** An AI agent can go from "build me a todo app" to a fully planned GSD project with roadmap, without any human interaction.
-**Current focus:** Phase 2: Core Commands
+**Current focus:** Phase 3: Reliability
 
 ## Current Position
 
-Phase: 2.1 of 5 (Integration Fixes)
-Plan: 2 of 2 in current phase
-Status: Phase Complete
-Last activity: 2026-02-22 -- Completed 02.1-02-PLAN.md (engine flag forwarding and error propagation)
+Phase: 3 of 5 (Reliability)
+Plan: Not started
+Status: Ready to plan
+Last activity: 2026-02-22 -- Phase 2.1 gap closure complete, transitioning to Phase 3
 
 Progress: [███████░░░] 64%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 7
+- Total plans completed: 9
 - Average duration: 4min
-- Total execution time: 0.42 hours
+- Total execution time: 0.50 hours
 
 **By Phase:**
 
@@ -29,9 +29,10 @@ Progress: [███████░░░] 64%
 |-------|-------|-------|----------|
 | 1-Foundation | 01-01, 01-02, 01-03 | 12min | 4min |
 | 2-Core Commands | 02-01, 02-02, 02-03, 02-04 | 14min | 4min |
+| 2.1-Integration Fixes | 02.1-01, 02.1-02 | 8min | 4min |
 
 **Recent Trend:**
-- Last 5 plans: 01-03 (4min), 02-01 (5min), 02-02 (3min), 02-03 (3min), 02-04 (3min)
+- Last 5 plans: 02-02 (3min), 02-03 (3min), 02-04 (3min), 02.1-01 (4min), 02.1-02 (4min)
 - Trend: stable
 
 *Updated after each plan completion*
@@ -85,11 +86,11 @@ None yet.
 
 ### Blockers/Concerns
 
-- Claude Agent SDK is alpha (v0.1.x) -- needs hands-on spike during Phase 1 planning to validate SDK vs raw subprocess.
-- GSD non-interactive question mapping undocumented -- needs empirical testing during Phase 2 planning.
+- Claude Agent SDK is alpha (v0.1.x) -- adapter facade pattern in client.py isolates this risk (resolved by Phase 1 design).
+- State parser doesn't handle decimal phase numbers (e.g., "2.1") -- fragile tests fail when STATE.md references sub-phases.
 
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: Completed 02-04-PLAN.md (CLI gap closure -- --idea option and per-command shared options)
+Stopped at: Phase 2.1 complete, ready to plan Phase 3 (Reliability)
 Resume file: None
