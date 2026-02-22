@@ -80,11 +80,11 @@ Plans:
   2. A multi-step workflow (new-project followed by plan-phase) can resume the same Claude session via captured session ID, maintaining conversation context
   3. Running any command with `--output-format text` produces human-readable output instead of JSON
   4. Every command response includes token count and estimated cost in the usage metadata field
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 03-01: TBD
-- [ ] 03-02: TBD
+- [ ] 03-01-PLAN.md — Retry logic with exponential backoff and session resume via --resume flag
+- [ ] 03-02-PLAN.md — Text output formatter, --output-format flag, and usage metadata enrichment with cost
 
 ### Phase 4: Library API and Events
 **Goal**: Python agents (OpenClaw) can import openclawpack as a library, call async functions that return typed models, and subscribe to lifecycle events for reactive behavior
