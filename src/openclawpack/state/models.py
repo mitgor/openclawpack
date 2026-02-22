@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
-from pydantic import BaseModel, ConfigDict, computed_field
+from typing import Any
+
+from pydantic import BaseModel, ConfigDict, Field, computed_field
 
 
 class ProjectConfig(BaseModel):
@@ -102,3 +104,20 @@ class PlanningDirectory(BaseModel):
         if total_plans > 0:
             return complete_plans / total_plans * 100
         return 0.0
+
+
+class RegistryEntry(BaseModel):
+    """A single registered project in the multi-project registry."""
+
+    name: str
+    path: str  # Absolute, resolved path
+    registered_at: str  # ISO 8601 timestamp
+    last_checked_at: str | None = None
+    last_known_state: dict[str, Any] | None = None
+
+
+class ProjectRegistryData(BaseModel):
+    """Persistent registry of all registered GSD projects."""
+
+    version: int = 1
+    projects: dict[str, RegistryEntry] = Field(default_factory=dict)
