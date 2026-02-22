@@ -344,6 +344,203 @@ class TestAnswerMapWiring:
         assert "can_use_tool" not in captured_kwargs
         assert "hooks" not in captured_kwargs
 
+    @pytest.mark.anyio
+    async def test_answer_map_uses_hooks_dict_with_hookmatcher(self) -> None:
+        """When answer_map provided, hooks contain HookMatcher objects."""
+        from claude_agent_sdk import HookMatcher
+
+        from openclawpack.commands.engine import WorkflowEngine
+
+        engine = WorkflowEngine()
+
+        captured_kwargs: dict = {}
+
+        async def mock_run(prompt, **kwargs):
+            captured_kwargs.update(kwargs)
+            from openclawpack.output.schema import CommandResult
+
+            return CommandResult.ok(result="done")
+
+        with patch(_TRANSPORT_PATCH) as MockTransport:
+            instance = MockTransport.return_value
+            instance.run = mock_run
+            await engine.run_gsd_command(
+                "gsd:new-project",
+                answer_map={"depth": "3"},
+            )
+
+        hooks = captured_kwargs["hooks"]
+        assert "PreToolUse" in hooks
+        assert isinstance(hooks["PreToolUse"], list)
+        assert isinstance(hooks["PreToolUse"][0], HookMatcher)
+
+
+# ── Verbose/quiet forwarding tests ──────────────────────────────
+
+
+class TestVerboseQuietForwarding:
+    """WorkflowEngine forwards verbose/quiet flags to transport.run()."""
+
+    @pytest.mark.anyio
+    async def test_verbose_forwarded_to_transport_run(self) -> None:
+        """verbose=True on engine passes verbose=True to run() kwargs."""
+        from openclawpack.commands.engine import WorkflowEngine
+
+        engine = WorkflowEngine(verbose=True)
+
+        captured_kwargs: dict = {}
+
+        async def mock_run(prompt, **kwargs):
+            captured_kwargs.update(kwargs)
+            from openclawpack.output.schema import CommandResult
+
+            return CommandResult.ok(result="done")
+
+        with patch(_TRANSPORT_PATCH) as MockTransport:
+            instance = MockTransport.return_value
+            instance.run = mock_run
+            await engine.run_gsd_command("gsd:new-project")
+
+        assert captured_kwargs.get("verbose") is True
+
+    @pytest.mark.anyio
+    async def test_verbose_not_forwarded_when_false(self) -> None:
+        """verbose=False on engine does not pass verbose kwarg."""
+        from openclawpack.commands.engine import WorkflowEngine
+
+        engine = WorkflowEngine(verbose=False)
+
+        captured_kwargs: dict = {}
+
+        async def mock_run(prompt, **kwargs):
+            captured_kwargs.update(kwargs)
+            from openclawpack.output.schema import CommandResult
+
+            return CommandResult.ok(result="done")
+
+        with patch(_TRANSPORT_PATCH) as MockTransport:
+            instance = MockTransport.return_value
+            instance.run = mock_run
+            await engine.run_gsd_command("gsd:new-project")
+
+        assert "verbose" not in captured_kwargs
+
+    @pytest.mark.anyio
+    async def test_quiet_forwarded_to_transport_run(self) -> None:
+        """quiet=True on engine passes quiet=True to run() kwargs."""
+        from openclawpack.commands.engine import WorkflowEngine
+
+        engine = WorkflowEngine(quiet=True)
+
+        captured_kwargs: dict = {}
+
+        async def mock_run(prompt, **kwargs):
+            captured_kwargs.update(kwargs)
+            from openclawpack.output.schema import CommandResult
+
+            return CommandResult.ok(result="done")
+
+        with patch(_TRANSPORT_PATCH) as MockTransport:
+            instance = MockTransport.return_value
+            instance.run = mock_run
+            await engine.run_gsd_command("gsd:new-project")
+
+        assert captured_kwargs.get("quiet") is True
+
+    @pytest.mark.anyio
+    async def test_quiet_not_forwarded_when_false(self) -> None:
+        """quiet=False on engine does not pass quiet kwarg."""
+        from openclawpack.commands.engine import WorkflowEngine
+
+        engine = WorkflowEngine(quiet=False)
+
+        captured_kwargs: dict = {}
+
+        async def mock_run(prompt, **kwargs):
+            captured_kwargs.update(kwargs)
+            from openclawpack.output.schema import CommandResult
+
+            return CommandResult.ok(result="done")
+
+        with patch(_TRANSPORT_PATCH) as MockTransport:
+            instance = MockTransport.return_value
+            instance.run = mock_run
+            await engine.run_gsd_command("gsd:new-project")
+
+        assert "quiet" not in captured_kwargs
+
+    @pytest.mark.anyio
+    async def test_quiet_takes_precedence_over_verbose(self) -> None:
+        """When both quiet and verbose are set, quiet wins."""
+        from openclawpack.commands.engine import WorkflowEngine
+
+        engine = WorkflowEngine(quiet=True, verbose=True)
+
+        captured_kwargs: dict = {}
+
+        async def mock_run(prompt, **kwargs):
+            captured_kwargs.update(kwargs)
+            from openclawpack.output.schema import CommandResult
+
+            return CommandResult.ok(result="done")
+
+        with patch(_TRANSPORT_PATCH) as MockTransport:
+            instance = MockTransport.return_value
+            instance.run = mock_run
+            await engine.run_gsd_command("gsd:new-project")
+
+        assert captured_kwargs.get("quiet") is True
+        assert "verbose" not in captured_kwargs
+
+
+# ── TransportError handling tests ────────────────────────────────
+
+
+class TestTransportErrorHandling:
+    """WorkflowEngine catches TransportError and returns CommandResult.error()."""
+
+    @pytest.mark.anyio
+    async def test_transport_error_returns_command_result_error(self) -> None:
+        """CLINotFound raised by transport is caught and wrapped."""
+        from openclawpack.commands.engine import WorkflowEngine
+        from openclawpack.output.schema import CommandResult
+        from openclawpack.transport.errors import CLINotFound
+
+        engine = WorkflowEngine()
+
+        async def mock_run(prompt, **kwargs):
+            raise CLINotFound("Claude Code CLI not found")
+
+        with patch(_TRANSPORT_PATCH) as MockTransport:
+            instance = MockTransport.return_value
+            instance.run = mock_run
+            result = await engine.run_gsd_command("gsd:new-project")
+
+        assert isinstance(result, CommandResult)
+        assert result.success is False
+        assert "CLI not found" in result.errors[0]
+
+    @pytest.mark.anyio
+    async def test_transport_timeout_returns_error(self) -> None:
+        """TransportTimeout is caught and wrapped."""
+        from openclawpack.commands.engine import WorkflowEngine
+        from openclawpack.output.schema import CommandResult
+        from openclawpack.transport.errors import TransportTimeout
+
+        engine = WorkflowEngine()
+
+        async def mock_run(prompt, **kwargs):
+            raise TransportTimeout("timed out after 300s", timeout_seconds=300)
+
+        with patch(_TRANSPORT_PATCH) as MockTransport:
+            instance = MockTransport.return_value
+            instance.run = mock_run
+            result = await engine.run_gsd_command("gsd:new-project")
+
+        assert isinstance(result, CommandResult)
+        assert result.success is False
+        assert "timed out" in result.errors[0]
+
 
 # ── DEFAULT_TIMEOUTS tests ───────────────────────────────────────
 

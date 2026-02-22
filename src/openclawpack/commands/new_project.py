@@ -50,35 +50,39 @@ async def new_project_workflow(
     Returns:
         A :class:`CommandResult` with the operation outcome.
     """
-    # Lazy imports to avoid SDK dependency at module level (PKG-04)
-    from openclawpack.commands.engine import WorkflowEngine
+    try:
+        # Lazy imports to avoid SDK dependency at module level (PKG-04)
+        from openclawpack.commands.engine import WorkflowEngine
 
-    # If idea looks like a file path, read its content
-    idea_text = idea
-    idea_path = Path(idea)
-    if idea_path.is_file():
-        idea_text = idea_path.read_text(encoding="utf-8")
+        # If idea looks like a file path, read its content
+        idea_text = idea
+        idea_path = Path(idea)
+        if idea_path.is_file():
+            idea_text = idea_path.read_text(encoding="utf-8")
 
-    # Build answer map: defaults merged with overrides
-    answer_map = {**NEW_PROJECT_DEFAULTS, **(answer_overrides or {})}
+        # Build answer map: defaults merged with overrides
+        answer_map = {**NEW_PROJECT_DEFAULTS, **(answer_overrides or {})}
 
-    # Construct prompt for GSD new-project skill
-    prompt = f"/gsd:new-project --auto\n\n{idea_text}"
+        # Construct prompt for GSD new-project skill
+        prompt = f"/gsd:new-project --auto\n\n{idea_text}"
 
-    # Create workflow engine
-    engine = WorkflowEngine(
-        project_dir=project_dir or os.getcwd(),
-        verbose=verbose,
-        quiet=quiet,
-        timeout=timeout,
-    )
+        # Create workflow engine
+        engine = WorkflowEngine(
+            project_dir=project_dir or os.getcwd(),
+            verbose=verbose,
+            quiet=quiet,
+            timeout=timeout,
+        )
 
-    # Execute via engine with answer injection
-    return await engine.run_gsd_command(
-        "gsd:new-project",
-        prompt_override=prompt,
-        answer_map=answer_map,
-    )
+        # Execute via engine with answer injection
+        return await engine.run_gsd_command(
+            "gsd:new-project",
+            prompt_override=prompt,
+            answer_map=answer_map,
+        )
+    except Exception as e:
+        # Catch-all so CLI never shows raw tracebacks
+        return CommandResult.error(str(e))
 
 
 def new_project_workflow_sync(

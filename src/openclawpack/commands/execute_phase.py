@@ -55,23 +55,29 @@ async def execute_phase_workflow(
         A :class:`~openclawpack.output.schema.CommandResult` with the
         operation outcome.
     """
-    # Lazy imports to preserve CLI independence (PKG-04)
-    from openclawpack.commands.engine import WorkflowEngine
+    try:
+        # Lazy imports to preserve CLI independence (PKG-04)
+        from openclawpack.commands.engine import WorkflowEngine
 
-    answer_map = {**EXECUTE_PHASE_DEFAULTS, **(answer_overrides or {})}
+        answer_map = {**EXECUTE_PHASE_DEFAULTS, **(answer_overrides or {})}
 
-    engine = WorkflowEngine(
-        project_dir=project_dir,
-        verbose=verbose,
-        quiet=quiet,
-        timeout=timeout or 1200,
-    )
+        engine = WorkflowEngine(
+            project_dir=project_dir,
+            verbose=verbose,
+            quiet=quiet,
+            timeout=timeout or 1200,
+        )
 
-    return await engine.run_gsd_command(
-        "gsd:execute-phase",
-        prompt_args=str(phase),
-        answer_map=answer_map,
-    )
+        return await engine.run_gsd_command(
+            "gsd:execute-phase",
+            prompt_args=str(phase),
+            answer_map=answer_map,
+        )
+    except Exception as e:
+        # Catch-all so CLI never shows raw tracebacks
+        from openclawpack.output.schema import CommandResult
+
+        return CommandResult.error(str(e))
 
 
 def execute_phase_workflow_sync(

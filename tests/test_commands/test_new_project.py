@@ -190,3 +190,24 @@ class TestNewProjectEngineConfig:
             result = await new_project_workflow(idea="test project")
             assert isinstance(result, CommandResult)
             assert result.success is True
+
+
+# ── Error handling tests ────────────────────────────────────────
+
+
+class TestNewProjectErrorHandling:
+    """new_project_workflow catches exceptions and returns structured errors."""
+
+    @pytest.mark.anyio
+    async def test_workflow_returns_error_on_failure(self):
+        """Exception during workflow returns CommandResult.error(), not traceback."""
+        engine = MagicMock()
+        engine.run_gsd_command = AsyncMock(
+            side_effect=Exception("Transport failed")
+        )
+        with patch(_ENGINE_PATCH, return_value=engine):
+            result = await new_project_workflow(idea="test idea")
+
+        assert isinstance(result, CommandResult)
+        assert result.success is False
+        assert "Transport failed" in result.errors[0]

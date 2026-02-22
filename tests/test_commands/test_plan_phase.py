@@ -177,3 +177,25 @@ class TestProjectDirPropagation:
         kwargs = MockEngine.call_args.kwargs
         assert kwargs["verbose"] is True
         assert kwargs["quiet"] is True
+
+
+# ── Error handling tests ────────────────────────────────────────
+
+
+class TestPlanPhaseErrorHandling:
+    """plan_phase_workflow catches exceptions and returns structured errors."""
+
+    @pytest.mark.anyio
+    async def test_workflow_returns_error_on_failure(self) -> None:
+        """Exception during workflow returns CommandResult.error(), not traceback."""
+        mock_run = AsyncMock(side_effect=Exception("Transport failed"))
+        from openclawpack.output.schema import CommandResult
+
+        with patch(_ENGINE_CLS_PATCH) as MockEngine:
+            mock_instance = MockEngine.return_value
+            mock_instance.run_gsd_command = mock_run
+            result = await plan_phase_workflow(phase=1)
+
+        assert isinstance(result, CommandResult)
+        assert result.success is False
+        assert "Transport failed" in result.errors[0]
