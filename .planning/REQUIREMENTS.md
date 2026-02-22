@@ -22,9 +22,9 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **CMD-02**: `openclawpack plan-phase <N>` plans a phase non-interactively
 - [ ] **CMD-03**: `openclawpack execute-phase <N>` executes a phase non-interactively
 - [ ] **CMD-04**: `openclawpack status` returns current project state as structured JSON
-- [ ] **CMD-05**: Pre-filled answer injection converts agent-supplied parameters into GSD --auto mode document format
-- [ ] **CMD-06**: All commands accept `--project-dir` to specify working directory (defaults to cwd)
-- [ ] **CMD-07**: All commands accept `--verbose` for detailed subprocess output and `--quiet` for minimal output
+- [x] **CMD-05**: Pre-filled answer injection converts agent-supplied parameters into GSD --auto mode document format
+- [x] **CMD-06**: All commands accept `--project-dir` to specify working directory (defaults to cwd)
+- [x] **CMD-07**: All commands accept `--verbose` for detailed subprocess output and `--quiet` for minimal output
 
 ### Output
 
@@ -46,7 +46,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **INT-02**: Library returns typed Pydantic models, not raw dicts
 - [ ] **INT-03**: Event hook system fires callbacks on: phase_complete, plan_complete, error, decision_needed, progress_update
 - [ ] **INT-04**: Hooks work in both library mode (Python callbacks) and CLI mode (JSON events to stdout)
-- [ ] **INT-05**: GSD workflow engine translates high-level commands into correct sequence of Claude Code invocations with proper GSD skill triggers
+- [x] **INT-05**: GSD workflow engine translates high-level commands into correct sequence of Claude Code invocations with proper GSD skill triggers
 
 ### Packaging
 
@@ -97,9 +97,9 @@ Deferred to future release. Tracked but not in current roadmap.
 | CMD-02 | Phase 2 | Pending |
 | CMD-03 | Phase 2 | Pending |
 | CMD-04 | Phase 2 | Pending |
-| CMD-05 | Phase 2 | Pending |
-| CMD-06 | Phase 2 | Pending |
-| CMD-07 | Phase 2 | Pending |
+| CMD-05 | Phase 2 | Complete |
+| CMD-06 | Phase 2 | Complete |
+| CMD-07 | Phase 2 | Complete |
 | OUT-01 | Phase 1 | Complete |
 | OUT-02 | Phase 1 | Complete |
 | OUT-03 | Phase 3 | Pending |
@@ -112,7 +112,7 @@ Deferred to future release. Tracked but not in current roadmap.
 | INT-02 | Phase 4 | Pending |
 | INT-03 | Phase 4 | Pending |
 | INT-04 | Phase 4 | Pending |
-| INT-05 | Phase 2 | Pending |
+| INT-05 | Phase 2 | Complete |
 | PKG-01 | Phase 1 | Complete |
 | PKG-02 | Phase 1 | Complete |
 | PKG-03 | Phase 1 | Complete |

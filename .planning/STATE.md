@@ -5,32 +5,33 @@
 See: .planning/PROJECT.md (updated 2026-02-21)
 
 **Core value:** An AI agent can go from "build me a todo app" to a fully planned GSD project with roadmap, without any human interaction.
-**Current focus:** Phase 1: Foundation
+**Current focus:** Phase 2: Core Commands
 
 ## Current Position
 
-Phase: 1 of 5 (Foundation)
-Plan: 3 of 3 in current phase
+Phase: 2 of 5 (Core Commands)
+Plan: 1 of 3 in current phase
 Status: Executing
-Last activity: 2026-02-21 -- Completed 01-03-PLAN.md
+Last activity: 2026-02-22 -- Completed 02-01-PLAN.md
 
-Progress: [███░░░░░░░] 27%
+Progress: [████░░░░░░] 36%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 3
+- Total plans completed: 4
 - Average duration: 4min
-- Total execution time: 0.20 hours
+- Total execution time: 0.28 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1-Foundation | 01-01, 01-02, 01-03 | 12min | 4min |
+| 2-Core Commands | 02-01 | 5min | 5min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (4min), 01-02 (4min), 01-03 (4min)
+- Last 5 plans: 01-01 (4min), 01-02 (4min), 01-03 (4min), 02-01 (5min)
 - Trend: stable
 
 *Updated after each plan completion*
@@ -53,6 +54,11 @@ Recent decisions affecting current work:
 - [01-03]: Flat exception hierarchy (5 subclasses of TransportError) for simple catch patterns
 - [01-03]: client.py is the ONLY file importing claude_agent_sdk (adapter facade pattern)
 - [01-03]: TransportConfig is a dataclass (not Pydantic) -- configuration, not validated data
+- [02-01]: can_use_tool and hooks are per-call kwargs (not config-level) since they vary per invocation
+- [02-01]: Answer matching uses 3-tier strategy: exact -> substring (case-insensitive) -> fallback to first option
+- [02-01]: WorkflowEngine uses SystemPromptPreset dict with 'claude_code' preset and append for non-interactive instruction
+- [02-01]: CLI commands use lazy imports inside function bodies to maintain PKG-04 independence
+- [02-01]: DEFAULT_TIMEOUTS dict at module level allows per-command timeout defaults (900/600/1200s)
 
 ### Pending Todos
 
@@ -65,6 +71,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-21
-Stopped at: Completed 01-02-PLAN.md (state parser, Pydantic models, read_project_state)
+Last session: 2026-02-22
+Stopped at: Completed 02-01-PLAN.md (command infrastructure, answer injection, workflow engine, CLI dispatchers)
 Resume file: None
