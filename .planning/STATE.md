@@ -10,28 +10,28 @@ See: .planning/PROJECT.md (updated 2026-02-21)
 ## Current Position
 
 Phase: 2 of 5 (Core Commands)
-Plan: 3 of 3 in current phase
-Status: Executing
-Last activity: 2026-02-22 -- Completed 02-03-PLAN.md
+Plan: 4 of 4 in current phase
+Status: Phase Complete
+Last activity: 2026-02-22 -- Completed 02-04-PLAN.md
 
-Progress: [██████░░░░] 55%
+Progress: [███████░░░] 64%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 6
+- Total plans completed: 7
 - Average duration: 4min
-- Total execution time: 0.37 hours
+- Total execution time: 0.42 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1-Foundation | 01-01, 01-02, 01-03 | 12min | 4min |
-| 2-Core Commands | 02-01, 02-02, 02-03 | 11min | 4min |
+| 2-Core Commands | 02-01, 02-02, 02-03, 02-04 | 14min | 4min |
 
 **Recent Trend:**
-- Last 5 plans: 01-02 (4min), 01-03 (4min), 02-01 (5min), 02-02 (3min), 02-03 (3min)
+- Last 5 plans: 01-03 (4min), 02-01 (5min), 02-02 (3min), 02-03 (3min), 02-04 (3min)
 - Trend: stable
 
 *Updated after each plan completion*
@@ -67,6 +67,9 @@ Recent decisions affecting current work:
 - [02-03]: EXECUTE_PHASE_DEFAULTS uses 6 keys with checkpoint approval, wave continuation, and decision selection
 - [02-03]: Default timeouts: plan-phase=600s, execute-phase=1200s (2x for multi-wave subagent execution)
 - [02-03]: Tests patch WorkflowEngine at source module due to lazy imports preventing module-level patching
+- [02-04]: --idea option takes precedence over positional argument when both provided
+- [02-04]: _resolve_options() centralizes per-command/global option fallback to avoid duplication
+- [02-04]: Per-command --project-dir/--verbose/--quiet on all commands for post-subcommand placement
 
 ### Pending Todos
 
@@ -80,5 +83,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: Completed 02-03-PLAN.md (plan-phase and execute-phase workflows with answer defaults and tests)
+Stopped at: Completed 02-04-PLAN.md (CLI gap closure -- --idea option and per-command shared options)
 Resume file: None
