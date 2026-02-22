@@ -8,6 +8,7 @@ isolating the SDK's v0.1.x API from the rest of openclawpack.
 from __future__ import annotations
 
 import asyncio
+from collections.abc import AsyncIterable, AsyncIterator
 from typing import Any
 
 import anyio
@@ -31,6 +32,20 @@ from openclawpack.transport.errors import (
     TransportTimeout,
 )
 from openclawpack.transport.types import TransportConfig
+
+
+async def _wrap_prompt_as_stream(prompt_text: str) -> AsyncIterator[dict[str, Any]]:
+    """Wrap a string prompt as an AsyncIterable for streaming mode.
+
+    The SDK requires an AsyncIterable prompt when ``can_use_tool`` is set
+    (streaming mode). This helper yields a single user message event.
+    """
+    yield {
+        "type": "user",
+        "session_id": "",
+        "message": {"role": "user", "content": prompt_text},
+        "parent_tool_use_id": None,
+    }
 
 
 class ClaudeTransport:
@@ -75,6 +90,8 @@ class ClaudeTransport:
         # Pop per-call-only kwargs before building options
         can_use_tool = kwargs.pop("can_use_tool", None)
         hooks = kwargs.pop("hooks", None)
+        verbose = kwargs.pop("verbose", False)
+        quiet = kwargs.pop("quiet", False)
 
         options = ClaudeAgentOptions(
             cwd=kwargs.get("cwd", self.config.cwd),
@@ -99,20 +116,31 @@ class ClaudeTransport:
         if max_budget_usd is not None:
             options.max_budget_usd = max_budget_usd
 
-        # Build sdk_query kwargs for optional per-call parameters
-        query_kwargs: dict[str, Any] = {
-            "prompt": prompt,
-            "options": options,
-        }
+        # Set per-call parameters on options object (NOT as sdk_query kwargs)
         if can_use_tool is not None:
-            query_kwargs["can_use_tool"] = can_use_tool
+            options.can_use_tool = can_use_tool
         if hooks is not None:
-            query_kwargs["hooks"] = hooks
+            options.hooks = hooks
+
+        # Verbose/quiet control SDK stderr output
+        if quiet:
+            options.stderr = None  # suppress all SDK stderr output
+        elif verbose:
+            import sys as _sys
+
+            options.stderr = lambda line: print(line, file=_sys.stderr)
+
+        # SDK requires AsyncIterable prompt when can_use_tool is set
+        prompt_input: str | AsyncIterable[dict[str, Any]]
+        if options.can_use_tool is not None:
+            prompt_input = _wrap_prompt_as_stream(prompt)
+        else:
+            prompt_input = prompt
 
         try:
             result_message: ResultMessage | None = None
             async with asyncio.timeout(self.config.timeout_seconds):
-                async for message in sdk_query(**query_kwargs):
+                async for message in sdk_query(prompt=prompt_input, options=options):
                     if isinstance(message, ResultMessage):
                         result_message = message
 
