@@ -15,7 +15,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: Foundation** - Transport layer, typed models, state parsing, and installable package skeleton (completed 2026-02-21)
 - [x] **Phase 2: Core Commands** - Non-interactive GSD commands with workflow engine and answer injection (completed 2026-02-22)
 - [x] **Phase 2.1: Integration Fixes** - INSERTED: Fix SDK wiring, error propagation, and verbose/quiet forwarding (completed 2026-02-22)
-- [ ] **Phase 3: Reliability** - Retry logic, session continuity, output formats, and cost tracking
+- [x] **Phase 3: Reliability** - Retry logic, session continuity, output formats, and cost tracking (completed 2026-02-22)
 - [ ] **Phase 4: Library API and Events** - Async Python API and lifecycle event hook system
 - [ ] **Phase 5: Multi-Project Management** - Project registry with add/list/remove commands
 
@@ -83,8 +83,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 03-01-PLAN.md — Retry logic with exponential backoff and session resume via --resume flag
-- [ ] 03-02-PLAN.md — Text output formatter, --output-format flag, and usage metadata enrichment with cost
+- [x] 03-01-PLAN.md — Retry logic with exponential backoff and session resume via --resume flag
+- [x] 03-02-PLAN.md — Text output formatter, --output-format flag, and usage metadata enrichment with cost
 
 ### Phase 4: Library API and Events
 **Goal**: Python agents (OpenClaw) can import openclawpack as a library, call async functions that return typed models, and subscribe to lifecycle events for reactive behavior
@@ -94,11 +94,11 @@ Plans:
   1. A Python script can `from openclawpack import create_project, plan_phase, execute_phase, get_status` and call them as async functions that return typed Pydantic models
   2. Library consumers can register callbacks for phase_complete, plan_complete, error, decision_needed, and progress_update events
   3. Event hooks fire in both library mode (Python callbacks) and CLI mode (JSON event lines to stdout)
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 04-01: TBD
-- [ ] 04-02: TBD
+- [ ] 04-01-PLAN.md — Event system (EventBus, EventType, Event models, CLI handler) and ProjectStatus typed model
+- [ ] 04-02-PLAN.md — Library API facade (api.py with async functions), __init__.py re-exports, CLI event integration
 
 ### Phase 5: Multi-Project Management
 **Goal**: An agent can register, track, and manage multiple GSD projects simultaneously through a persistent project registry
@@ -122,6 +122,6 @@ Phases execute in numeric order: 1 -> 2 -> 2.1 -> 3 -> 4 -> 5
 | 1. Foundation | 3/3 | Complete    | 2026-02-21 |
 | 2. Core Commands | 4/4 | Complete    | 2026-02-22 |
 | 2.1 Integration Fixes | 0/2 | Complete    | 2026-02-22 |
-| 3. Reliability | 0/2 | Not started | - |
+| 3. Reliability | 2/2 | Complete    | 2026-02-22 |
 | 4. Library API and Events | 0/2 | Not started | - |
 | 5. Multi-Project Management | 0/1 | Not started | - |
