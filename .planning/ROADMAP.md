@@ -93,7 +93,7 @@ Plans:
 **Success Criteria** (what must be TRUE):
   1. A Python script can `from openclawpack import create_project, plan_phase, execute_phase, get_status` and call them as async functions that return typed Pydantic models
   2. Library consumers can register callbacks for phase_complete, plan_complete, error, decision_needed, and progress_update events
-  3. Event hooks fire in both library mode (Python callbacks) and CLI mode (JSON event lines to stdout)
+  3. Event hooks fire in both library mode (Python callbacks) and CLI mode (JSON event lines to stderr)
 **Plans**: 2 plans
 
 Plans:

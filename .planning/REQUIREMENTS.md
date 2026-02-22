@@ -45,7 +45,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **INT-01**: Python library API exposes async functions: `create_project()`, `plan_phase()`, `execute_phase()`, `get_status()`
 - [ ] **INT-02**: Library returns typed Pydantic models, not raw dicts
 - [ ] **INT-03**: Event hook system fires callbacks on: phase_complete, plan_complete, error, decision_needed, progress_update
-- [ ] **INT-04**: Hooks work in both library mode (Python callbacks) and CLI mode (JSON events to stdout)
+- [ ] **INT-04**: Hooks work in both library mode (Python callbacks) and CLI mode (JSON events to stderr)
 - [x] **INT-05**: GSD workflow engine translates high-level commands into correct sequence of Claude Code invocations with proper GSD skill triggers
 
 ### Packaging
