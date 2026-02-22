@@ -186,27 +186,11 @@ def status(
     ctx: typer.Context = typer.Context,
 ) -> None:
     """Show project state as structured JSON."""
-    import time
-
     project_dir = ctx.obj.get("project_dir")
     quiet = ctx.obj.get("quiet", False)
 
-    start = time.monotonic()
-    target = project_dir or "."
+    # Lazy import of workflow function
+    from openclawpack.commands.status import status_workflow
 
-    try:
-        # Lazy import of state reader
-        from openclawpack.state.reader import get_project_summary
-
-        from openclawpack.output.schema import CommandResult
-
-        summary = get_project_summary(target)
-        duration_ms = int((time.monotonic() - start) * 1000)
-        result = CommandResult.ok(result=summary, duration_ms=duration_ms)
-    except FileNotFoundError as e:
-        from openclawpack.output.schema import CommandResult
-
-        duration_ms = int((time.monotonic() - start) * 1000)
-        result = CommandResult.error(str(e), duration_ms=duration_ms)
-
+    result = status_workflow(project_dir=project_dir)
     _output(result, quiet)
