@@ -257,8 +257,9 @@ class TestClaudeTransportRunForwarding:
 
         captured_kwargs: dict = {}
 
-        async def fake_query(**kw):
-            captured_kwargs.update(kw)
+        async def fake_query(*, prompt, options, transport=None):
+            captured_kwargs["prompt"] = prompt
+            captured_kwargs["options"] = options
             from claude_agent_sdk import ResultMessage
 
             msg = ResultMessage.__new__(ResultMessage)
@@ -286,8 +287,9 @@ class TestClaudeTransportRunForwarding:
 
         captured_kwargs: dict = {}
 
-        async def fake_query(**kw):
-            captured_kwargs.update(kw)
+        async def fake_query(*, prompt, options, transport=None):
+            captured_kwargs["prompt"] = prompt
+            captured_kwargs["options"] = options
             from claude_agent_sdk import ResultMessage
 
             msg = ResultMessage.__new__(ResultMessage)
@@ -315,8 +317,9 @@ class TestClaudeTransportRunForwarding:
 
         captured_kwargs: dict = {}
 
-        async def fake_query(**kw):
-            captured_kwargs.update(kw)
+        async def fake_query(*, prompt, options, transport=None):
+            captured_kwargs["prompt"] = prompt
+            captured_kwargs["options"] = options
             from claude_agent_sdk import ResultMessage
 
             msg = ResultMessage.__new__(ResultMessage)
@@ -344,8 +347,9 @@ class TestClaudeTransportRunForwarding:
 
         captured_kwargs: dict = {}
 
-        async def fake_query(**kw):
-            captured_kwargs.update(kw)
+        async def fake_query(*, prompt, options, transport=None):
+            captured_kwargs["prompt"] = prompt
+            captured_kwargs["options"] = options
             from claude_agent_sdk import ResultMessage
 
             msg = ResultMessage.__new__(ResultMessage)
@@ -363,7 +367,8 @@ class TestClaudeTransportRunForwarding:
 
     @pytest.mark.anyio
     async def test_can_use_tool_forwarded(self) -> None:
-        """can_use_tool kwarg is forwarded to sdk_query."""
+        """can_use_tool is set on options object, not passed as sdk_query kwarg."""
+        from collections.abc import AsyncIterable
         from unittest.mock import patch
 
         from openclawpack.transport import ClaudeTransport, TransportConfig
@@ -375,8 +380,10 @@ class TestClaudeTransportRunForwarding:
 
         captured_kwargs: dict = {}
 
-        async def fake_query(**kw):
-            captured_kwargs.update(kw)
+        async def fake_query(*, prompt, options, transport=None):
+            """Mock enforcing real sdk_query() signature -- keyword-only, 3 args max."""
+            captured_kwargs["prompt"] = prompt
+            captured_kwargs["options"] = options
             from claude_agent_sdk import ResultMessage
 
             msg = ResultMessage.__new__(ResultMessage)
@@ -390,25 +397,29 @@ class TestClaudeTransportRunForwarding:
         with patch("openclawpack.transport.client.sdk_query", side_effect=fake_query):
             await transport.run("test", can_use_tool=my_can_use_tool)
 
-        assert captured_kwargs["can_use_tool"] is my_can_use_tool
+        assert captured_kwargs["options"].can_use_tool is my_can_use_tool
+        # Prompt should be AsyncIterable when can_use_tool is set
+        assert isinstance(captured_kwargs["prompt"], AsyncIterable)
 
     @pytest.mark.anyio
     async def test_hooks_forwarded(self) -> None:
-        """hooks kwarg is forwarded to sdk_query."""
+        """hooks are set on options object, not passed as sdk_query kwarg."""
         from unittest.mock import patch
 
         from openclawpack.transport import ClaudeTransport, TransportConfig
 
-        async def pre_tool_use(session, event):
-            pass
+        async def pre_tool_use(input, tool_use_id, context):
+            return {}
 
         hooks = {"PreToolUse": pre_tool_use}
         transport = ClaudeTransport(TransportConfig())
 
         captured_kwargs: dict = {}
 
-        async def fake_query(**kw):
-            captured_kwargs.update(kw)
+        async def fake_query(*, prompt, options, transport=None):
+            """Mock enforcing real sdk_query() signature -- keyword-only, 3 args max."""
+            captured_kwargs["prompt"] = prompt
+            captured_kwargs["options"] = options
             from claude_agent_sdk import ResultMessage
 
             msg = ResultMessage.__new__(ResultMessage)
@@ -422,11 +433,11 @@ class TestClaudeTransportRunForwarding:
         with patch("openclawpack.transport.client.sdk_query", side_effect=fake_query):
             await transport.run("test", hooks=hooks)
 
-        assert captured_kwargs["hooks"] is hooks
+        assert captured_kwargs["options"].hooks is hooks
 
     @pytest.mark.anyio
     async def test_can_use_tool_not_passed_when_none(self) -> None:
-        """can_use_tool is NOT in sdk_query kwargs when not provided."""
+        """When not provided, can_use_tool and hooks remain None on options."""
         from unittest.mock import patch
 
         from openclawpack.transport import ClaudeTransport, TransportConfig
@@ -435,8 +446,10 @@ class TestClaudeTransportRunForwarding:
 
         captured_kwargs: dict = {}
 
-        async def fake_query(**kw):
-            captured_kwargs.update(kw)
+        async def fake_query(*, prompt, options, transport=None):
+            """Mock enforcing real sdk_query() signature -- keyword-only, 3 args max."""
+            captured_kwargs["prompt"] = prompt
+            captured_kwargs["options"] = options
             from claude_agent_sdk import ResultMessage
 
             msg = ResultMessage.__new__(ResultMessage)
@@ -450,8 +463,94 @@ class TestClaudeTransportRunForwarding:
         with patch("openclawpack.transport.client.sdk_query", side_effect=fake_query):
             await transport.run("test")
 
-        assert "can_use_tool" not in captured_kwargs
-        assert "hooks" not in captured_kwargs
+        assert captured_kwargs["options"].can_use_tool is None
+        assert captured_kwargs["options"].hooks is None
+        # Prompt should be plain string when can_use_tool is not set
+        assert captured_kwargs["prompt"] == "test"
+
+    @pytest.mark.anyio
+    async def test_verbose_sets_stderr_callback(self) -> None:
+        """verbose=True sets options.stderr to a callback."""
+        from unittest.mock import patch
+
+        from openclawpack.transport import ClaudeTransport, TransportConfig
+
+        transport = ClaudeTransport(TransportConfig())
+
+        captured_kwargs: dict = {}
+
+        async def fake_query(*, prompt, options, transport=None):
+            captured_kwargs["options"] = options
+            from claude_agent_sdk import ResultMessage
+
+            msg = ResultMessage.__new__(ResultMessage)
+            msg.is_error = False
+            msg.result = "ok"
+            msg.session_id = "s1"
+            msg.usage = {}
+            msg.duration_ms = 1
+            yield msg
+
+        with patch("openclawpack.transport.client.sdk_query", side_effect=fake_query):
+            await transport.run("test", verbose=True)
+
+        assert callable(captured_kwargs["options"].stderr)
+
+    @pytest.mark.anyio
+    async def test_quiet_sets_stderr_none(self) -> None:
+        """quiet=True explicitly sets options.stderr to None."""
+        from unittest.mock import patch
+
+        from openclawpack.transport import ClaudeTransport, TransportConfig
+
+        transport = ClaudeTransport(TransportConfig())
+
+        captured_kwargs: dict = {}
+
+        async def fake_query(*, prompt, options, transport=None):
+            captured_kwargs["options"] = options
+            from claude_agent_sdk import ResultMessage
+
+            msg = ResultMessage.__new__(ResultMessage)
+            msg.is_error = False
+            msg.result = "ok"
+            msg.session_id = "s1"
+            msg.usage = {}
+            msg.duration_ms = 1
+            yield msg
+
+        with patch("openclawpack.transport.client.sdk_query", side_effect=fake_query):
+            await transport.run("test", quiet=True)
+
+        assert captured_kwargs["options"].stderr is None
+
+    @pytest.mark.anyio
+    async def test_quiet_takes_precedence_over_verbose(self) -> None:
+        """When both quiet and verbose are set, quiet wins (stderr=None)."""
+        from unittest.mock import patch
+
+        from openclawpack.transport import ClaudeTransport, TransportConfig
+
+        transport = ClaudeTransport(TransportConfig())
+
+        captured_kwargs: dict = {}
+
+        async def fake_query(*, prompt, options, transport=None):
+            captured_kwargs["options"] = options
+            from claude_agent_sdk import ResultMessage
+
+            msg = ResultMessage.__new__(ResultMessage)
+            msg.is_error = False
+            msg.result = "ok"
+            msg.session_id = "s1"
+            msg.usage = {}
+            msg.duration_ms = 1
+            yield msg
+
+        with patch("openclawpack.transport.client.sdk_query", side_effect=fake_query):
+            await transport.run("test", verbose=True, quiet=True)
+
+        assert captured_kwargs["options"].stderr is None
 
 
 # ── Integration test (slow, requires Claude Code) ────────────────

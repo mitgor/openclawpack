@@ -96,18 +96,40 @@ def build_answer_callback(
     return can_use_tool
 
 
-def build_noop_pretool_hook() -> Callable[..., Coroutine[Any, Any, None]]:
-    """Create a no-op PreToolUse hook required for ``can_use_tool`` to fire.
+def build_noop_pretool_hook() -> Callable[..., Coroutine[Any, Any, dict]]:
+    """Create a no-op PreToolUse hook matching the SDK ``HookCallback`` signature.
 
     The Python SDK requires a ``PreToolUse`` hook to be registered for the
-    ``can_use_tool`` callback to be invoked. This returns an async no-op
-    function suitable for that purpose.
+    ``can_use_tool`` callback to be invoked. The hook callback signature is
+    ``(HookInput, str | None, HookContext) -> Awaitable[HookJSONOutput]``.
+
+    Uses ``Any`` for parameter types to avoid importing SDK types directly,
+    preserving PKG-04 lazy import compatibility.
 
     Returns:
-        An async callable for the ``hooks={"PreToolUse": ...}`` parameter.
+        An async callable with the 3-parameter SDK ``HookCallback`` signature.
     """
 
-    async def pre_tool_use(session: Any, event: Any) -> None:
-        pass
+    async def pre_tool_use(
+        input: Any,  # HookInput  # noqa: A002
+        tool_use_id: Any,  # str | None
+        context: Any,  # HookContext
+    ) -> dict:
+        """No-op hook -- allow all tool use."""
+        return {}  # empty SyncHookJSONOutput = proceed normally
 
     return pre_tool_use
+
+
+def build_hooks_dict() -> dict[str, list]:
+    """Build hooks dict in SDK-expected format.
+
+    Returns a ``{HookEvent: [HookMatcher(hooks=[callback])]}`` structure
+    that the SDK expects. Lazy-imports ``HookMatcher`` from the SDK.
+
+    Returns:
+        Dict mapping ``"PreToolUse"`` to a list containing one ``HookMatcher``.
+    """
+    from claude_agent_sdk import HookMatcher
+
+    return {"PreToolUse": [HookMatcher(hooks=[build_noop_pretool_hook()])]}

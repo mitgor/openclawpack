@@ -163,13 +163,13 @@ class TestBuildNoopPretoolHook:
         assert callable(hook)
 
     @pytest.mark.anyio
-    async def test_hook_is_async_noop(self) -> None:
-        """Hook completes without error and returns None."""
+    async def test_hook_accepts_three_args(self) -> None:
+        """Hook accepts 3-parameter SDK HookCallback signature and returns dict."""
         from openclawpack.commands.answers import build_noop_pretool_hook
 
         hook = build_noop_pretool_hook()
-        result = await hook(None, None)
-        assert result is None
+        result = await hook("fake_input", "tool-123", "fake_context")
+        assert result == {}
 
     def test_each_call_returns_new_instance(self) -> None:
         """Each call creates a distinct function object."""
@@ -178,3 +178,31 @@ class TestBuildNoopPretoolHook:
         hook1 = build_noop_pretool_hook()
         hook2 = build_noop_pretool_hook()
         assert hook1 is not hook2
+
+
+# ── build_hooks_dict tests ──────────────────────────────────────
+
+
+class TestBuildHooksDict:
+    """Test that build_hooks_dict returns the correct SDK structure."""
+
+    def test_returns_hookmatcher_list(self) -> None:
+        """build_hooks_dict returns {PreToolUse: [HookMatcher(...)]}."""
+        from claude_agent_sdk import HookMatcher
+
+        from openclawpack.commands.answers import build_hooks_dict
+
+        result = build_hooks_dict()
+        assert "PreToolUse" in result
+        assert isinstance(result["PreToolUse"], list)
+        assert len(result["PreToolUse"]) == 1
+        assert isinstance(result["PreToolUse"][0], HookMatcher)
+
+    def test_hookmatcher_contains_callback(self) -> None:
+        """HookMatcher.hooks list contains exactly one callable."""
+        from openclawpack.commands.answers import build_hooks_dict
+
+        result = build_hooks_dict()
+        matcher = result["PreToolUse"][0]
+        assert len(matcher.hooks) == 1
+        assert callable(matcher.hooks[0])
