@@ -72,9 +72,10 @@ class WorkflowEngine:
         # Lazy imports to avoid SDK dependency at module level
         from openclawpack.commands.answers import (
             build_answer_callback,
-            build_noop_pretool_hook,
+            build_hooks_dict,
         )
         from openclawpack.transport.client import ClaudeTransport
+        from openclawpack.transport.errors import TransportError
         from openclawpack.transport.types import TransportConfig
 
         # 1. Construct prompt
@@ -107,11 +108,20 @@ class WorkflowEngine:
         run_kwargs: dict[str, Any] = {}
         if answer_map is not None:
             run_kwargs["can_use_tool"] = build_answer_callback(answer_map)
-            run_kwargs["hooks"] = {"PreToolUse": build_noop_pretool_hook()}
+            run_kwargs["hooks"] = build_hooks_dict()
 
-        # 5. Create transport and run
+        # 5. Forward verbose/quiet to transport
+        if self.quiet:
+            run_kwargs["quiet"] = True
+        elif self.verbose:
+            run_kwargs["verbose"] = True
+
+        # 6. Create transport and run, catching transport errors
         transport = ClaudeTransport(config)
-        return await transport.run(prompt, **run_kwargs)
+        try:
+            return await transport.run(prompt, **run_kwargs)
+        except TransportError as e:
+            return CommandResult.error(str(e))
 
     def run_gsd_command_sync(
         self,
