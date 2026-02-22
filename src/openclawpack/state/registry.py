@@ -6,7 +6,6 @@ cross-platform user data directory.
 
 from __future__ import annotations
 
-import json
 import os
 import sys
 import tempfile
@@ -91,7 +90,7 @@ class ProjectRegistry:
         content = registry_path.read_text(encoding="utf-8")
         try:
             data = ProjectRegistryData.model_validate_json(content)
-        except (json.JSONDecodeError, Exception) as exc:
+        except Exception as exc:
             msg = f"Invalid or corrupt registry JSON at {registry_path}: {exc}"
             raise ValueError(msg) from exc
 
