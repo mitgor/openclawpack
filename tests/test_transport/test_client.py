@@ -148,6 +148,55 @@ class TestTransportConfig:
         config = TransportConfig(allowed_tools=["Read", "Glob"])
         assert config.allowed_tools == ["Read", "Glob"]
 
+    def test_default_setting_sources_is_none(self) -> None:
+        from openclawpack.transport import TransportConfig
+
+        config = TransportConfig()
+        assert config.setting_sources is None
+
+    def test_default_max_turns_is_none(self) -> None:
+        from openclawpack.transport import TransportConfig
+
+        config = TransportConfig()
+        assert config.max_turns is None
+
+    def test_default_max_budget_usd_is_none(self) -> None:
+        from openclawpack.transport import TransportConfig
+
+        config = TransportConfig()
+        assert config.max_budget_usd is None
+
+    def test_system_prompt_accepts_dict(self) -> None:
+        from openclawpack.transport import TransportConfig
+
+        preset = {"type": "preset", "preset": "claude_code", "append": "test"}
+        config = TransportConfig(system_prompt=preset)
+        assert config.system_prompt == preset
+
+    def test_system_prompt_accepts_str(self) -> None:
+        from openclawpack.transport import TransportConfig
+
+        config = TransportConfig(system_prompt="You are a helper.")
+        assert config.system_prompt == "You are a helper."
+
+    def test_custom_setting_sources(self) -> None:
+        from openclawpack.transport import TransportConfig
+
+        config = TransportConfig(setting_sources=["project"])
+        assert config.setting_sources == ["project"]
+
+    def test_custom_max_turns(self) -> None:
+        from openclawpack.transport import TransportConfig
+
+        config = TransportConfig(max_turns=10)
+        assert config.max_turns == 10
+
+    def test_custom_max_budget_usd(self) -> None:
+        from openclawpack.transport import TransportConfig
+
+        config = TransportConfig(max_budget_usd=5.0)
+        assert config.max_budget_usd == 5.0
+
 
 # ── ClaudeTransport instantiation tests ──────────────────────────
 
@@ -188,6 +237,221 @@ class TestClaudeTransportInstantiation:
 
         transport = ClaudeTransport()
         assert callable(transport.run_sync)
+
+
+# ── ClaudeTransport.run() option forwarding tests (mocked SDK) ───
+
+class TestClaudeTransportRunForwarding:
+    """Test that run() forwards new config fields and kwargs to sdk_query."""
+
+    @pytest.mark.anyio
+    async def test_system_prompt_dict_forwarded(self) -> None:
+        """system_prompt dict preset is set on options."""
+        from unittest.mock import AsyncMock, patch
+
+        from openclawpack.transport import ClaudeTransport, TransportConfig
+
+        preset = {"type": "preset", "preset": "claude_code", "append": "test"}
+        config = TransportConfig(system_prompt=preset)
+        transport = ClaudeTransport(config)
+
+        captured_kwargs: dict = {}
+
+        async def fake_query(**kw):
+            captured_kwargs.update(kw)
+            from claude_agent_sdk import ResultMessage
+
+            msg = ResultMessage.__new__(ResultMessage)
+            msg.is_error = False
+            msg.result = "ok"
+            msg.session_id = "s1"
+            msg.usage = {}
+            msg.duration_ms = 1
+            yield msg
+
+        with patch("openclawpack.transport.client.sdk_query", side_effect=fake_query):
+            await transport.run("test prompt")
+
+        assert captured_kwargs["options"].system_prompt == preset
+
+    @pytest.mark.anyio
+    async def test_setting_sources_forwarded(self) -> None:
+        """setting_sources from config is set on options."""
+        from unittest.mock import patch
+
+        from openclawpack.transport import ClaudeTransport, TransportConfig
+
+        config = TransportConfig(setting_sources=["project"])
+        transport = ClaudeTransport(config)
+
+        captured_kwargs: dict = {}
+
+        async def fake_query(**kw):
+            captured_kwargs.update(kw)
+            from claude_agent_sdk import ResultMessage
+
+            msg = ResultMessage.__new__(ResultMessage)
+            msg.is_error = False
+            msg.result = "ok"
+            msg.session_id = "s1"
+            msg.usage = {}
+            msg.duration_ms = 1
+            yield msg
+
+        with patch("openclawpack.transport.client.sdk_query", side_effect=fake_query):
+            await transport.run("test prompt")
+
+        assert captured_kwargs["options"].setting_sources == ["project"]
+
+    @pytest.mark.anyio
+    async def test_max_turns_forwarded(self) -> None:
+        """max_turns from config is set on options."""
+        from unittest.mock import patch
+
+        from openclawpack.transport import ClaudeTransport, TransportConfig
+
+        config = TransportConfig(max_turns=5)
+        transport = ClaudeTransport(config)
+
+        captured_kwargs: dict = {}
+
+        async def fake_query(**kw):
+            captured_kwargs.update(kw)
+            from claude_agent_sdk import ResultMessage
+
+            msg = ResultMessage.__new__(ResultMessage)
+            msg.is_error = False
+            msg.result = "ok"
+            msg.session_id = "s1"
+            msg.usage = {}
+            msg.duration_ms = 1
+            yield msg
+
+        with patch("openclawpack.transport.client.sdk_query", side_effect=fake_query):
+            await transport.run("test prompt")
+
+        assert captured_kwargs["options"].max_turns == 5
+
+    @pytest.mark.anyio
+    async def test_max_budget_usd_forwarded(self) -> None:
+        """max_budget_usd from config is set on options."""
+        from unittest.mock import patch
+
+        from openclawpack.transport import ClaudeTransport, TransportConfig
+
+        config = TransportConfig(max_budget_usd=2.5)
+        transport = ClaudeTransport(config)
+
+        captured_kwargs: dict = {}
+
+        async def fake_query(**kw):
+            captured_kwargs.update(kw)
+            from claude_agent_sdk import ResultMessage
+
+            msg = ResultMessage.__new__(ResultMessage)
+            msg.is_error = False
+            msg.result = "ok"
+            msg.session_id = "s1"
+            msg.usage = {}
+            msg.duration_ms = 1
+            yield msg
+
+        with patch("openclawpack.transport.client.sdk_query", side_effect=fake_query):
+            await transport.run("test prompt")
+
+        assert captured_kwargs["options"].max_budget_usd == 2.5
+
+    @pytest.mark.anyio
+    async def test_can_use_tool_forwarded(self) -> None:
+        """can_use_tool kwarg is forwarded to sdk_query."""
+        from unittest.mock import patch
+
+        from openclawpack.transport import ClaudeTransport, TransportConfig
+
+        async def my_can_use_tool(tool_name, tool_input, context):
+            pass
+
+        transport = ClaudeTransport(TransportConfig())
+
+        captured_kwargs: dict = {}
+
+        async def fake_query(**kw):
+            captured_kwargs.update(kw)
+            from claude_agent_sdk import ResultMessage
+
+            msg = ResultMessage.__new__(ResultMessage)
+            msg.is_error = False
+            msg.result = "ok"
+            msg.session_id = "s1"
+            msg.usage = {}
+            msg.duration_ms = 1
+            yield msg
+
+        with patch("openclawpack.transport.client.sdk_query", side_effect=fake_query):
+            await transport.run("test", can_use_tool=my_can_use_tool)
+
+        assert captured_kwargs["can_use_tool"] is my_can_use_tool
+
+    @pytest.mark.anyio
+    async def test_hooks_forwarded(self) -> None:
+        """hooks kwarg is forwarded to sdk_query."""
+        from unittest.mock import patch
+
+        from openclawpack.transport import ClaudeTransport, TransportConfig
+
+        async def pre_tool_use(session, event):
+            pass
+
+        hooks = {"PreToolUse": pre_tool_use}
+        transport = ClaudeTransport(TransportConfig())
+
+        captured_kwargs: dict = {}
+
+        async def fake_query(**kw):
+            captured_kwargs.update(kw)
+            from claude_agent_sdk import ResultMessage
+
+            msg = ResultMessage.__new__(ResultMessage)
+            msg.is_error = False
+            msg.result = "ok"
+            msg.session_id = "s1"
+            msg.usage = {}
+            msg.duration_ms = 1
+            yield msg
+
+        with patch("openclawpack.transport.client.sdk_query", side_effect=fake_query):
+            await transport.run("test", hooks=hooks)
+
+        assert captured_kwargs["hooks"] is hooks
+
+    @pytest.mark.anyio
+    async def test_can_use_tool_not_passed_when_none(self) -> None:
+        """can_use_tool is NOT in sdk_query kwargs when not provided."""
+        from unittest.mock import patch
+
+        from openclawpack.transport import ClaudeTransport, TransportConfig
+
+        transport = ClaudeTransport(TransportConfig())
+
+        captured_kwargs: dict = {}
+
+        async def fake_query(**kw):
+            captured_kwargs.update(kw)
+            from claude_agent_sdk import ResultMessage
+
+            msg = ResultMessage.__new__(ResultMessage)
+            msg.is_error = False
+            msg.result = "ok"
+            msg.session_id = "s1"
+            msg.usage = {}
+            msg.duration_ms = 1
+            yield msg
+
+        with patch("openclawpack.transport.client.sdk_query", side_effect=fake_query):
+            await transport.run("test")
+
+        assert "can_use_tool" not in captured_kwargs
+        assert "hooks" not in captured_kwargs
 
 
 # ── Integration test (slow, requires Claude Code) ────────────────

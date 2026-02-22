@@ -58,7 +58,9 @@ class ClaudeTransport:
 
         Args:
             prompt: The prompt to send to Claude Code.
-            **kwargs: Override config values for this call (cwd, allowed_tools, etc).
+            **kwargs: Override config values for this call. Supported overrides:
+                cwd, allowed_tools, permission_mode, cli_path, system_prompt,
+                setting_sources, max_turns, max_budget_usd, can_use_tool, hooks.
 
         Returns:
             CommandResult with success status, result text, errors, session info.
@@ -70,6 +72,10 @@ class ClaudeTransport:
             JSONDecodeError: Subprocess output contained malformed JSON.
             ConnectionError_: Connection to subprocess lost.
         """
+        # Pop per-call-only kwargs before building options
+        can_use_tool = kwargs.pop("can_use_tool", None)
+        hooks = kwargs.pop("hooks", None)
+
         options = ClaudeAgentOptions(
             cwd=kwargs.get("cwd", self.config.cwd),
             allowed_tools=kwargs.get("allowed_tools", self.config.allowed_tools) or [],
@@ -81,10 +87,32 @@ class ClaudeTransport:
         if system_prompt is not None:
             options.system_prompt = system_prompt
 
+        setting_sources = kwargs.get("setting_sources", self.config.setting_sources)
+        if setting_sources is not None:
+            options.setting_sources = setting_sources
+
+        max_turns = kwargs.get("max_turns", self.config.max_turns)
+        if max_turns is not None:
+            options.max_turns = max_turns
+
+        max_budget_usd = kwargs.get("max_budget_usd", self.config.max_budget_usd)
+        if max_budget_usd is not None:
+            options.max_budget_usd = max_budget_usd
+
+        # Build sdk_query kwargs for optional per-call parameters
+        query_kwargs: dict[str, Any] = {
+            "prompt": prompt,
+            "options": options,
+        }
+        if can_use_tool is not None:
+            query_kwargs["can_use_tool"] = can_use_tool
+        if hooks is not None:
+            query_kwargs["hooks"] = hooks
+
         try:
             result_message: ResultMessage | None = None
             async with asyncio.timeout(self.config.timeout_seconds):
-                async for message in sdk_query(prompt=prompt, options=options):
+                async for message in sdk_query(**query_kwargs):
                     if isinstance(message, ResultMessage):
                         result_message = message
 
