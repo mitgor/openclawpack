@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-02-21)
 ## Current Position
 
 Phase: 5 of 5 (Multi-Project Management)
-Plan: 1 of 2 complete
-Status: In progress
-Last activity: 2026-02-22 -- Plan 05-01 registry data layer complete
+Plan: 2 of 2 complete
+Status: Complete
+Last activity: 2026-02-22 -- Plan 05-02 CLI and library API complete
 
-Progress: [██████████] 97%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 14
+- Total plans completed: 15
 - Average duration: 4min
-- Total execution time: 0.94 hours
+- Total execution time: 1.01 hours
 
 **By Phase:**
 
@@ -32,10 +32,10 @@ Progress: [██████████] 97%
 | 2.1-Integration Fixes | 02.1-01, 02.1-02 | 8min | 4min |
 | 3-Reliability | 03-01, 03-02 | 8min | 4min |
 | 4-Library API and Events | 04-01, 04-02 | 10min | 5min |
-| 5-Multi-Project Management | 05-01 | 4min | 4min |
+| 5-Multi-Project Management | 05-01, 05-02 | 8min | 4min |
 
 **Recent Trend:**
-- Last 5 plans: 03-01 (4min), 03-02 (4min), 04-01 (5min), 04-02 (5min), 05-01 (4min)
+- Last 5 plans: 03-02 (4min), 04-01 (5min), 04-02 (5min), 05-01 (4min), 05-02 (4min)
 - Trend: stable
 
 *Updated after each plan completion*
@@ -107,6 +107,10 @@ Recent decisions affecting current work:
 - [05-01]: Atomic write uses tempfile.mkstemp + os.replace (not NamedTemporaryFile) for explicit fd control and fsync
 - [05-01]: State snapshot in add() gracefully falls back to None if get_project_summary() fails
 - [05-01]: _user_data_dir() uses stdlib only (sys.platform + os.environ) to respect PKG-03 zero-dep constraint
+- [05-02]: projects_app uses _output_result helper that reads output_format from parent ctx.obj
+- [05-02]: All three CLI commands catch ValueError separately from generic Exception for targeted error messages
+- [05-02]: API functions follow established pattern: lazy import, optional event_bus, CommandResult return
+- [05-02]: __init__.py _api_names set expanded to 7 names (4 existing + 3 new)
 
 ### Pending Todos
 
@@ -120,5 +124,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: Completed 05-01-PLAN.md (registry data layer)
+Stopped at: Completed 05-02-PLAN.md (CLI and library API)
 Resume file: None
